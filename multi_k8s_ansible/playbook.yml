@@ -1,0 +1,37 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  pre_tasks:
+    - name: copy hosts file => /etc/hosts
+      become: true
+      shell:  cp -f hosts /etc/hosts
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      changed_when: False
+    - setup:
+
+- hosts: masters
+  become: true
+  gather_facts: true
+  roles:
+     - 0components       # Install packages that allow apt to be used over HTTPS
+     - 1docker           # Install Docker 
+#    - 1docker2          # Install Docker using deb pkg in download folder
+     - 2swap             # Disable swap, Disable firewall
+     - 3cluster          # Install kubelet,kubeadm,kubecofig
+     - 4kmaster_calico   # Initialize Kubernetes master with calico n/w
+#    - 4kmaster_flannel  # Initialize Kubernetes master with flannel n/w
+#    - 5kubedash         # Initialize Kubernetes dashboard
+     - 6helm             # Initialize Kubernetes dashboard
+
+- hosts: workers
+  become: true
+  gather_facts: true
+  roles:
+     - 0components       # Install packages that allow apt to be used over HTTPS
+     - 1docker           # Install Docker 
+#    - 1docker2          # Install Docker using deb pkg in download folder
+     - 2swap             # Disable swap, Disable firewall
+     - 3cluster          # Install kubelet,kubeadm,kubecofig
+#    - 4kworker          # Initialize worker node

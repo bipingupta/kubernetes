@@ -1,0 +1,5 @@
+- name: Initialize the Kubernetes-dashboard using kubectl
+  shell: |
+    kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
+    kubectl apply -f /vagrant/download/recommended.yaml
+    kubectl apply -f /vagrant/download/sa_cluster_admin.yaml

@@ -1,0 +1,38 @@
+# ------------------- Dashboard Service Account ------------------- #
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dashboard-admin-sa
+  namespace: kube-system
+  
+---
+# ------------------- Dashboard-Cluster-Role ------------------- #
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: dashboard-admin-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: dashboard-admin-sa
+  namespace: kube-system
+ 
+---
+# ------------------- Dashboard-Cluster-Role-Binding ------------------- #
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+  name: dashboard-admin-sa
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
+subjects:
+- kind: ServiceAccount
+  name: dashboard-admin-sa
+  namespace: kube-system

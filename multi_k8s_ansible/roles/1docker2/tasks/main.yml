@@ -1,0 +1,12 @@
+---
+- name: Execute a shell script to install Docker.
+  shell: |
+     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+     export DOWNLOAD_PACKAGE=/vagrant/download
+     sudo dpkg -i $DOWNLOAD_PACKAGE/containerd.io.deb
+     sudo dpkg -i $DOWNLOAD_PACKAGE/docker-ce-cli.deb
+     sudo dpkg -i $DOWNLOAD_PACKAGE/docker-ce.deb
+     sudo systemctl status docker 
+     sudo docker run hello-world
+     usermod -aG docker vagrant
+

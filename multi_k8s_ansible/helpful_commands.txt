@@ -1,0 +1,198 @@
+=============================
+K8s MULTI-NODE-CLUSTER
+=============================
+https://geekflare.com/install-kubernetes-on-ubuntu/
+
+https://netapp-trident.readthedocs.io/en/stable-v18.07/reference/simple-kubernetes.html
+https://kubernetes.io/blog/2019/03/15/kubernetes-setup-using-ansible-and-vagrant/
+https://github.com/justmeandopensource/kubernetes/tree/master/vagrant-provisioning
+https://michele.sciabarra.com/2018/02/12/devops/Kubernetes-with-KubeAdm-Ansible-Vagrant/
+
+https://playbook.stakater.com/
+https://medium.com/stakater
+
+https://github.com/Praqma/LearnKubernetes/blob/master/kamran/Kubernetes-Fedora-Multi-node.md
+https://blog.inkubate.io/install-and-configure-a-multi-master-kubernetes-cluster-with-kubeadm/
+
+=============================
+Helpful Vagrant Commands
+=============================
+vagrant up                ==>> # If running first time, runs all tasks within provisioning otherwise just starts the VM and ignores all tasks
+vagrant status
+vagrant provision         ==>> # Runs all tasks within provisioning without restarting the VM
+vagrant ssh k8s-master    ==>> # Login to Linux box
+exit                      ==>> # Exit from Linux box
+vagrant suspend k8s-master ==>> # This suspends the guest machine Vagrant is managing, rather than fully shutting it down or destroying it.
+A suspend effectively saves the exact point-in-time state of the machine, so that when you resume it later, it begins running immediately from that point, rather than doing a full boot.
+vagrant resume k8s-master ==>> # resume the save machine
+vagrant halt k8s-master   ==>> # shuts down the running machine
+vagrant destroy -f
+vagrant box remove
+vagrant plugin list
+vagrant plugin install vagrant-cachier
+vagrant reload            ==>> # Does not run provisioning but restarts the VM
+vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
+	
+=============================
+Helpful KUBECTL Commands
+=============================
+$ kubectl get namespaces
+$ kubectl cluster-info
+
+$ kubectl get nodes  -o wide --show-labels --all-namespaces
+$ kubectl describe node
+$ kubectl get svc
+$ kubectl get pods
+$ kubectl get deployments
+$ kubectl get secrets -A
+$ kubectl -n kube-system describe secret 
+$ kubeadm reset -f
+
+=============================
+INSTALL CALICO OVERLAY N/W 
+=============================
+sudo kubectl apply -f /vagrant/download/calico.yaml
+sudo kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
+
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
+GENERATE JOIN COMMAND AND TOKEN
+sudo kubeadm token create --print-join-command
+
+TEST CALICO N/W
+kubectl get po -n kube-system
+kubectl get nodes
+sudo iptables --list
+
+============================
+K8s DASHBOARD UI Installation
+=============================
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+kubectl apply -f /vagrant/download/recommended.yaml
+kubectl apply -f /vagrant/download/sa_cluster_admin.yaml
+kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
+
+kubectl -n kubernetes-dashboard get all
+kubectl -n kubernetes-dashboard describe service kubernetes-dashboard
+http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+=============================
+HELM and TILLER Installation
+=============================
+https://www.replex.io/blog/how-to-install-access-and-add-heapster-metrics-to-the-kubernetes-dashboard
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta6/aio/deploy/recommended.yaml
+
+=============================
+Helpful TOKEN Commands
+=============================
+# On Master, show all nodes part of the cluster:
+kubectl get nodes
+kubeadm token create
+kubeadm token list
+
+=============================
+Helpful TROUBLESHOOTING & RESET Commands
+=============================
+When running into issues, use the following command to print logging information:
+# Troubleshooting
+journalctl -xeu kubelet
+
+To remove a node from the cluster:
+# On master, remove a node from the cluster (hard)
+kubectl get nodes
+kubectl delete nodes <nodename>
+
+# On the removed node, reset and uninstall kubernetes installation
+kubeadm reset
+yum erase kube* -y
+
+=============================
+DOCKER DND 
+=============================
+https://www.bogotobogo.com/DevOps/Docker/Docker-Kubernetes-Multi-Node-Local-Clusters-dind.php
+
+
+=============================
+RESET KUBERNETES CLUSTER
+=============================
+ESET COMMAND:
+sudo kubeadm reset -f && 
+ sudo systemctl stop kubelet && 
+ sudo systemctl stop docker && 
+ sudo rm -rf /var/lib/cni/ && 
+ sudo rm -rf /var/lib/kubelet/* && 
+ sudo rm -rf /etc/cni/ && 
+ sudo ifconfig cni0 down && 
+ sudo ifconfig flannel.1 down && 
+ sudo ifconfig docker0 down && 
+ sudo ip link delete cni0 && 
+ sudo ip link delete flannel.1
+
+After this I rebooted each machine, and proceeded with the setup of a new cluster, by setting up the master node:
+
+INSTALL COMMAND:
+sudo kubeadm init phase certs all && 
+ sudo kubeadm init phase kubeconfig all && 
+ sudo kubeadm init phase control-plane all --pod-network-cidr 10.244.0.0/16 &&
+ sudo sed -i 's/initialDelaySeconds: [0-9][0-9]/initialDelaySeconds: 240/g' /etc/kubernetes/manifests/kube-apiserver.yaml &&
+ sudo sed -i 's/failureThreshold: [0-9]/failureThreshold: 18/g' /etc/kubernetes/manifests/kube-apiserver.yaml &&
+ sudo sed -i 's/timeoutSeconds: [0-9][0-9]/timeoutSeconds: 20/g' /etc/kubernetes/manifests/kube-apiserver.yaml &&
+ sudo kubeadm init \
+   --v=1 \
+   --skip-phases=certs,kubeconfig,control-plane \
+   --ignore-preflight-errors=all \
+   --pod-network-cidr 10.244.0.0/16  
+
+=============================
+KUBERNETES CHEAT SHEET
+=============================
+Cluster Introspection
+kubectl get services                # List all services 
+kubectl get pods                    # List all pods
+kubectl get nodes -w                # Watch nodes continuously
+kubectl version                     # Get version information
+kubectl cluster-info                # Get cluster information
+kubectl config view                 # Get the configuration
+kubectl describe node <node>        # Output information about a node
+
+Pod and Container Introspection
+kubectl get pods                         # List the current pods
+kubectl describe pod <name>              # Describe pod <name>
+kubectl get rc                           # List the replication controllers
+kubectl get rc --namespace="<namespace>" # List the replication controllers in <namespace>
+kubectl describe rc <name>               # Describe replication controller <name>
+kubectl get svc                          # List the services
+kubectl describe svc <name>              # Describe service <name>
+
+Interacting with Pods
+kubectl run <name> --image=<image-name>    # Launch a pod called <name> using image <image-name>
+kubectl create -f <manifest.yaml>          # Create a service described in <manifest.yaml>
+kubectl scale --replicas=<count> rc <name> # Scale replication controller <name> to <count> instances
+kubectl expose rc <name> --port=<external> --target-port=<internal> # Map port <external> to port <internal> on replication controller <name>
+
+Stopping Kubernetes
+kubectl delete pod <name>                                         # Delete pod <name>
+kubectl delete rc <name>                                          # Delete replication controller <name>
+kubectl delete svc <name>                                         # Delete service <name>
+kubectl drain <n> --delete-local-data --force --ignore-daemonsets # Stop all pods on <n>
+kubectl delete node <name>                                        # Remove <node> from the cluster
+
+Debugging
+kubectl exec <service> <command> [-c <$container>] # execute <command> on <service>, optionally selecting container <$container>
+kubectl logs -f <name> [-c <$container>]           # Get logs from service <name>, optionally selecting container <$container>
+watch -n 2 cat /var/log/kublet.log                 # Watch the Kublet logs
+kubectl top node                                   # Show metrics for nodes
+kubectl top pod                                    # Show metrics for pods
+kubectl exec <service> <command> [-c <$container>] # execute <command> on <service>, optionally selecting container <$container>
+kubectl logs -f <name> [-c <$container>]           # Get logs from service <name>, optionally selecting container <$container>
+watch -n 2 cat /var/log/kublet.log                 # Watch the Kublet logs
+kubectl top node                                   # Show metrics for nodes
+kubectl top pod                                    # Show metrics for pods
+
+Administration
+kubeadm init                                              # Initialize your master node
+kubeadm join --token <token> <master-ip>:<master-port>    # Join a node to your Kubernetes cluster
+kubectl create namespace <namespace>                      # Create namespace <name>
+kubectl taint nodes --all node-role.kubernetes.io/master- # Allow Kubernetes master nodes to run pods
+kubeadm reset                                             # Reset current state
+kubectl get secrets                                       # List all secrets

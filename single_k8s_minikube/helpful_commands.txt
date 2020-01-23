@@ -1,0 +1,49 @@
+FROM URL 
+http://cloudwebworld.blogspot.com/2019/02/rapidly-spinning-up-vm-with-ubuntu.html
+
+=============================
+Helpful KUBECTL Commands
+=============================
+$ kubectl get namespaces
+$ kubectl cluster-info
+
+$ kubectl get nodes  -o wide --show-labels --all-namespaces
+$ kubectl describe node
+$ kubectl get svc
+$ kubectl get pods
+$ kubectl get deployments
+$ kubectl get secrets -A
+$ kubectl -n kube-system describe secret 
+$ kubeadm reset -f
+
+
+=============================
+Multi-CLuster Minikube =>> https://minikube.sigs.k8s.io/docs/start/linux/
+
+#https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+#https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+  
+#https://developer.ibm.com/tutorials/using-kubernetes-rbac-and-service-accounts/
+#https://github.com/justmeandopensource/kubernetes/tree/master/dashboard
+#https://helm.sh/docs/topics/rbac/
+
+=============================
+DIAGNOSING DASHBOARD
+=============================
+sudo kubectl cluster-info
+sudo kubectl get namespaces
+sudo kubectl get all --all-namespaces
+sudo kubectl -n kubernetes-dashboard get all
+
+############# PORT FORWARDING #############
+sudo kubectl -n kubernetes-dashboard describe service kubernetes-dashboard
+############# APPLY PORT-FORWARDING ON POD NOTE: NOT ON SERVICE #############
+sudo kubectl -n kubernetes-dashboard port-forward  kubernetes-dashboard-5996555fd8-27kq8 8001:8443
+
+http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
+sudo kubectl -n kubernetes-dashboard get sa
+sudo kubectl -n kubernetes-dashboard describe sa dashboard-admin-sa
+sudo kubectl -n kubernetes-dashboard get secret dashboard-admin-sa-token
+sudo kubectl -n kubernetes-dashboard describe secret dashboard-admin-sa-token
+
