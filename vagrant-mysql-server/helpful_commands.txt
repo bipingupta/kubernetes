@@ -1,0 +1,13 @@
+=============================
+Helpful Vagrant Commands
+=============================
+vagrant up 
+vagrant provision
+vagrant ssh
+exit
+vagrant suspend
+vagrant resume
+
+vagrant destroy -f
+vagrant box remove
+	

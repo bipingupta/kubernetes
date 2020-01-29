@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # ubuntu mysql server
+  config.vm.define "MySQL-Server" do |mysql|
+    mysql.vm.box = "ubuntu/xenial64"
+    mysql.vm.hostname = "MySQL-Server"
+	# connect on port 3306
+	mysql.vm.network "forwarded_port", guest: 3306, host: 3306
+    mysql.vm.network "private_network", ip: "172.42.42.42"
+	
+    mysql.vm.provider "virtualbox" do |v|
+      v.name = "MySQL-Server"
+      v.memory = 1024
+      v.cpus = 1
+    end
+	
+    mysql.vm.provision "shell", path: "scripts/install.sh"
+	
+  end
+end
