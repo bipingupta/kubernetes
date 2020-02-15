@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.cache.auto_detect = true
+  # ubuntu mysql server
+  config.vm.define "PostgreSQL-Server" do |postgresql|
+    postgresql.vm.box = "ubuntu/xenial64"
+    postgresql.vm.hostname = "PostgreSQL-Server"
+	# connect on port 5432
+	postgresql.vm.network "forwarded_port", guest: 5432, host: 5432
+    postgresql.vm.network "private_network", ip: "172.42.42.42"
+	
+    postgresql.vm.provider "virtualbox" do |v|
+      v.name = "PostgreSQL-Server"
+      v.memory = 1024
+      v.cpus = 1
+    end
+	
+    postgresql.vm.provision "shell", path: "scripts/install_postgresql-Server.sh"
+		
+  end
+end
