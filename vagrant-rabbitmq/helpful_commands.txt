@@ -23,22 +23,3 @@ vagrant plugin install hostmanager
 
 vagrant reload            ==>> # Does not run provisioning but restarts the VM
 vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
-
-
-=============================
-Helpful My-SQL Commands
-=============================
-sudo service mysql restart
-mysql -u root -proot
-
-mysql -u username -proot < example.sql
-
-SHOW DATABASES;
-CREATE DATABASE testdb;
-SHOW CREATE DATABASE testdb;
-USE testdb;
-DROP DATABASE testdb;
-EXIT
-GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' IDENTIFIED BY 'password';
-
-http://172.42.42.42:8306/phpmyadmin

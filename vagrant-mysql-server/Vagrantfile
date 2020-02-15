@@ -9,6 +9,7 @@ Vagrant.configure("2") do |config|
     mysql.vm.hostname = "MySQL-Server"
 	# connect on port 3306
 	mysql.vm.network "forwarded_port", guest: 3306, host: 3306
+	mysql.vm.network "forwarded_port", guest: 80, host: 8306
     mysql.vm.network "private_network", ip: "172.42.42.42"
 	
     mysql.vm.provider "virtualbox" do |v|
@@ -17,7 +18,8 @@ Vagrant.configure("2") do |config|
       v.cpus = 1
     end
 	
-    mysql.vm.provision "shell", path: "scripts/install.sh"
-	
+    mysql.vm.provision "shell", path: "scripts/install_MySQL-Server.sh"
+#	mysql.vm.provision "shell", path: "scripts/install_PhpMyAdmin.sh"
+		
   end
 end
