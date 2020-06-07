@@ -24,7 +24,6 @@ vagrant plugin install hostmanager
 vagrant reload            ==>> # Does not run provisioning but restarts the VM
 vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
 
-
 =============================
 Helpful My-SQL Commands
 =============================
