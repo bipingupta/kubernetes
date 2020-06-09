@@ -12,6 +12,8 @@ sudo cp -v -f $DOWNLOAD_PACKAGE/kubectl $HOME/bin
 sudo chmod +x $HOME/bin/minikube
 sudo chmod +x $HOME/bin/kubectl
 
+sudo apt-get install conntrack
+
 echo "***************************** Start M i n i k u b e *****************************"
 minikube start --vm-driver=none
 cat ~/.kube/config
