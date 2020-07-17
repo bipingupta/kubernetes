@@ -9,8 +9,8 @@ kubernetes:1.26.3
 job-dsl:1.77
 # SonarQube Scanner
 sonar:2.11
-
-script-security:1.74
+# Maven Integration
+maven-plugin:3.7
 
 #### MUST Installed plugins: ####
 ant:::http://updates.jenkins-ci.org/download/plugins/ant/1.11/ant.hpi
