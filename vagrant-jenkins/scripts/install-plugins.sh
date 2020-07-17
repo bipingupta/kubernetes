@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#http://updates.jenkins-ci.org/download/plugins/
-#http://updates.jenkins-ci.org/download/plugins/ant/1.3/ant.hpi
 echo "***************************** SNAPD - Installation *****************************"
 
 set -o pipefail

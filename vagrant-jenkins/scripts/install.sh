@@ -19,3 +19,6 @@ sudo systemctl status jenkins
 
 echo "***************************** PRINT - PASSWORD *****************************"
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+echo "***************************** PLUGINS - INSTALLATION *****************************"
+sudo /vagrant/scripts/install-plugins.sh  < /vagrant/scripts/plugins.txt
