@@ -1,28 +1,26 @@
 =============================
 Helpful Vagrant Commands
 =============================
-vagrant up                ==>> # If running first time, runs all tasks within provisioning otherwise just starts the VM and ignores all tasks
+vagrant up               ==>> # (START) If running first time, runs all tasks within provisioning otherwise just starts the VM and ignores all tasks.
+vagrant reload           ==>> # (Re-START) Does not run provisioning but restarts the VM.
 vagrant status
+vagrant halt             ==>> # (STOP) Shuts Down the running machine.
 
-vagrant provision         ==>> # Runs all tasks within provisioning without restarting the VM
+vagrant suspend          ==>> # (HIBERNATE) This suspends the guest machine Vagrant is managing, rather than fully shutting it down.
+vagrant resume           ==>> # (RESUME FROM HIBERNATE)resume the save machine
 
-vagrant ssh rabbitmq    ==>> # Login to Linux box
-exit                      ==>> # Exit from Linux box
+vagrant ssh              ==>> # Login to Linux box
+exit                     ==>> # Exit from Linux box
 
-vagrant suspend rabbitmq  ==>> # This suspends the guest machine Vagrant is managing, rather than fully shutting it down or destroying it.
-vagrant resume rabbitmqr ==>> # resume the save machine
+vagrant destroy -f  ==>> # Stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process forcefully and without confirmation
+vagrant box remove       ==>> # Removes a box from Vagrant
 
-vagrant halt rabbitmq   ==>> # shuts down the running machine
-
-vagrant destroy -f
-vagrant box remove
+vagrant provision        ==>> # Runs all tasks within provisioning without restarting the VM
+vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
 
 vagrant plugin list
 vagrant plugin install vagrant-cachier
 vagrant plugin install hostmanager
-
-vagrant reload            ==>> # Does not run provisioning but restarts the VM
-vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
 
 
 =============================

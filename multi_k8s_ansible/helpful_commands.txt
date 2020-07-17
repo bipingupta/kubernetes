@@ -17,21 +17,26 @@ https://blog.inkubate.io/install-and-configure-a-multi-master-kubernetes-cluster
 =============================
 Helpful Vagrant Commands
 =============================
-vagrant up                ==>> # If running first time, runs all tasks within provisioning otherwise just starts the VM and ignores all tasks
+vagrant up               ==>> # (START) If running first time, runs all tasks within provisioning otherwise just starts the VM and ignores all tasks.
+vagrant reload           ==>> # (Re-START) Does not run provisioning but restarts the VM.
 vagrant status
-vagrant provision         ==>> # Runs all tasks within provisioning without restarting the VM
-vagrant ssh k8s-master    ==>> # Login to Linux box
-exit                      ==>> # Exit from Linux box
-vagrant suspend k8s-master ==>> # This suspends the guest machine Vagrant is managing, rather than fully shutting it down or destroying it.
-A suspend effectively saves the exact point-in-time state of the machine, so that when you resume it later, it begins running immediately from that point, rather than doing a full boot.
-vagrant resume k8s-master ==>> # resume the save machine
-vagrant halt k8s-master   ==>> # shuts down the running machine
-vagrant destroy -f
-vagrant box remove
+vagrant halt             ==>> # (STOP) Shuts Down the running machine.
+
+vagrant suspend          ==>> # (HIBERNATE) This suspends the guest machine Vagrant is managing, rather than fully shutting it down.
+vagrant resume           ==>> # (RESUME FROM HIBERNATE)resume the save machine
+
+vagrant ssh              ==>> # Login to Linux box
+exit                     ==>> # Exit from Linux box
+
+vagrant destroy -f  ==>> # Stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process forcefully and without confirmation
+vagrant box remove       ==>> # Removes a box from Vagrant
+
+vagrant provision        ==>> # Runs all tasks within provisioning without restarting the VM
+vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
+
 vagrant plugin list
 vagrant plugin install vagrant-cachier
-vagrant reload            ==>> # Does not run provisioning but restarts the VM
-vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
+vagrant plugin install hostmanager
 	
 =============================
 Helpful KUBECTL Commands

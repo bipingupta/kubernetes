@@ -21,9 +21,3 @@ vagrant reload --provision  ==>>  # Runs all tasks within provisioning with rest
 vagrant plugin list
 vagrant plugin install vagrant-cachier
 vagrant plugin install hostmanager
-
-=============================
-Helpful My-SQL Commands
-=============================
-
-mongo admin -u admin -p admin

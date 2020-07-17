@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # ubuntu mysql server
+  config.vm.define "Jenkins-Server" do |jenkins|
+    jenkins.vm.box = "ubuntu/xenial64"
+    jenkins.vm.hostname = "Jenkins-Server"
+	# connect on port 8080
+	jenkins.vm.network "forwarded_port", guest: 8080,  host: 8080
+	
+    jenkins.vm.network "private_network", ip: "172.42.42.42"
+	
+    jenkins.vm.provider "virtualbox" do |v|
+      v.name = "Jenkins-Server"
+      v.memory = 1024
+      v.cpus = 1
+    end
+	
+    jenkins.vm.provision "shell", path: "scripts/install.sh"
+	jenkins.vm.provision "shell", path: "scripts/install-plugins.sh < scripts/plugins.txt"
+	
+  end
+end
