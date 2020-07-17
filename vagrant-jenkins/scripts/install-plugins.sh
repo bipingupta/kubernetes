@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "***************************** SNAPD - Installation *****************************"
-
 set -o pipefail
 
 JENKINS_WAR=${JENKINS_WAR:-/usr/share/jenkins/jenkins.war}
