@@ -10,7 +10,7 @@ A simple vagrant box with Jenkins-Server.
 
 ## Retrieving Admin Password
 # vagrant ssh 
-sudo cat /var/snap/jenkins/1242/secrets/initialAdminPassword
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 Install following Plugin 
 https://caylent.com/jenkins-plugins
