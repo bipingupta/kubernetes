@@ -7,6 +7,8 @@ monitoring:1.85.0
 kubernetes:1.26.3
 # Pipeline / Flow Plugin
 job-dsl:1.77
+# SonarQube Scanner
+sonar:2.11
 
 script-security:1.74
 

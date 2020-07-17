@@ -6,6 +6,10 @@ echo "***************************** JAVA 8 RUNTIME ENV - Installation **********
 sudo apt-get -y install openjdk-8-jdk
 java -version
 
+echo "***************************** MAVEN - Installation *****************************"
+sudo apt -y install maven
+mvn -version
+
 echo "***************************** JENKINS - Installation *****************************"
 wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add -
 wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
