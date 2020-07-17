@@ -7,7 +7,7 @@ sudo apt-get -y install openjdk-8-jdk
 java -version
 
 echo "***************************** MAVEN - Installation *****************************"
-sudo apt -y install maven
+sudo apt-get -y install maven
 mvn -version
 
 echo "***************************** JENKINS - Installation *****************************"
