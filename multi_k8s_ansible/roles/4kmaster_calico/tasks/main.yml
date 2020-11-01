@@ -8,15 +8,15 @@
   shell: |
      export IP_ADDR=$(ifconfig enp0s8 | grep Mask | awk '{print $2}'| cut -f2 -d:)
      export HOST_NAME=$(hostname -s)
-     sudo kubeadm init --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR --node-name $HOST_NAME --pod-network-cidr=192.168.0.0/16
+     kubeadm init --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR --node-name $HOST_NAME --pod-network-cidr=192.168.0.0/16
   tags: init-kubeadm
 
 - name: Set up admin creds for the vagrant user and untaint the cluster
   command: "{{ item }}"
   with_items:
-     - sudo --user=vagrant mkdir -p /home/vagrant/.kube
-     - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
-     - chown vagrant:vagrant /home/vagrant/.kube/config
+     - mkdir -p /home/vagrant/.kube
+     - sudo cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+     - sudo chown vagrant:vagrant /home/vagrant/.kube/config
   tags: init-kubeadm
 
 #- name: Install calico pod network
