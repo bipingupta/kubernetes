@@ -12,3 +12,8 @@
     - gnupg-agent
     - software-properties-common
     - python-apt
+    - mc
+    - ebtables
+    - ethtool
+    - containerd
+    - docker.io

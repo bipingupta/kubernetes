@@ -21,3 +21,8 @@
       - kubeadm
       - kubectl
 
+- name: Configure node ip
+  lineinfile:
+    path: /etc/default/kubelet
+    line: KUBELET_EXTRA_ARGS=--node-ip=172.42.42.100
+    create: yes

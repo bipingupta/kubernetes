@@ -15,8 +15,8 @@
   command: "{{ item }}"
   with_items:
      - mkdir -p /home/vagrant/.kube
-     - sudo cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
-     - sudo chown vagrant:vagrant /home/vagrant/.kube/config
+     - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+     - chown vagrant:vagrant /home/vagrant/.kube/config
   tags: init-kubeadm
 
 #- name: Install calico pod network
