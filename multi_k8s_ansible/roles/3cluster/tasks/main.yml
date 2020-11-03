@@ -17,12 +17,11 @@
     update_cache: yes
   vars:
     packages:
-      - kubelet
-      - kubeadm
-      - kubectl
+      - kubelet=1.18.10-00
+      - kubeadm=1.18.10-00
+      - kubectl=1.18.10-00
 
-- name: Configure node ip
-  lineinfile:
-    path: /etc/default/kubelet
-    line: KUBELET_EXTRA_ARGS=--node-ip=172.42.42.100
-    create: yes
+- name: Install calico pod network
+  shell: |
+    export KUBELET_EXTRA_ARGS=--node-ip=172.42.42.100
+  tags: init-calico

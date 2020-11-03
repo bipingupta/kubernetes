@@ -6,6 +6,7 @@
     - name: copy hosts file => /etc/hosts
       become: true
       shell:  cp -f hosts /etc/hosts
+      shell:  cp -f k8s.conf /etc/sysctl.d
     - name: Install python for Ansible
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       changed_when: False

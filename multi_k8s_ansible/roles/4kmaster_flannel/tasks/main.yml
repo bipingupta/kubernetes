@@ -1,18 +1,29 @@
 ---
-- name: Initialize Kubernetes
+- name: Initialize the Kubernetes cluster using kubeadm
   shell: |
-      kubeadm init --apiserver-advertise-address=172.42.42.100 --pod-network-cidr=10.244.0.0/16 >> /root/kubeinit.log 2>/dev/null
+     export IP_ADDR=$(ifconfig enp0s8 | grep Mask | awk '{print $2}'| cut -f2 -d:)
+     export HOST_NAME=$(hostname -s)
+     kubeadm init --kubernetes-version stable-1.18 --token-ttl 0  --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR --node-name $HOST_NAME --pod-network-cidr=10.16.0.0/16
+  tags: init-kubeadm
 
-- name: Copy Kube admin config
-  shell: |
-      mkdir /home/vagrant/.kube
-      cp /etc/kubernetes/admin.conf /home/vagrant/.kube/config
-      chown -R vagrant:vagrant /home/vagrant/.kube
+- name: Set up admin creds for the vagrant user and untaint the cluster
+  command: "{{ item }}"
+  with_items:
+     - mkdir -p /home/vagrant/.kube
+     - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+     - chown vagrant:vagrant /home/vagrant/.kube/config
+  tags: init-kubeadm
 
 - name: Deploy flannel network
   shell: |
-      su - vagrant -c "kubectl create -f /vagrant/kube-flannel.yaml"
+    sudo kubectl apply -c "kubectl create -f /vagrant/kube-flannel.yaml"
+  tags: init-calico
 
 - name: Deploy flannel network
   shell: |
       kubeadm token create --print-join-command > /joincluster.sh
+      
+- name: Generate join command and copy to vagrant shared folder
+  command: sudo kubeadm token create --print-join-command
+  tags: worker-join-command
+  register: join_command

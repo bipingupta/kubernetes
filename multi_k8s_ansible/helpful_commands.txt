@@ -59,7 +59,7 @@ INSTALL CALICO OVERLAY N/W
 sudo kubectl apply -f /vagrant/download/calico.yaml
 sudo kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
 
-kubectl taint nodes --all node-role.kubernetes.io/master-
+kubectl taint nodes --all node-role.kubernetes.io/master
 
 GENERATE JOIN COMMAND AND TOKEN
 sudo kubeadm token create --print-join-command
@@ -80,12 +80,6 @@ kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
 kubectl -n kubernetes-dashboard get all
 kubectl -n kubernetes-dashboard describe service kubernetes-dashboard
 http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-
-=============================
-HELM and TILLER Installation
-=============================
-https://www.replex.io/blog/how-to-install-access-and-add-heapster-metrics-to-the-kubernetes-dashboard
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta6/aio/deploy/recommended.yaml
 
 =============================
 Helpful TOKEN Commands
@@ -112,41 +106,10 @@ kubeadm reset
 yum erase kube* -y
 
 =============================
-DOCKER DND 
-=============================
-https://www.bogotobogo.com/DevOps/Docker/Docker-Kubernetes-Multi-Node-Local-Clusters-dind.php
-
-
-=============================
 RESET KUBERNETES CLUSTER
 =============================
 ESET COMMAND:
-sudo kubeadm reset -f && 
- sudo systemctl stop kubelet && 
- sudo systemctl stop docker && 
- sudo rm -rf /var/lib/cni/ && 
- sudo rm -rf /var/lib/kubelet/* && 
- sudo rm -rf /etc/cni/ && 
- sudo ifconfig cni0 down && 
- sudo ifconfig flannel.1 down && 
- sudo ifconfig docker0 down && 
- sudo ip link delete cni0 && 
- sudo ip link delete flannel.1
-
-After this I rebooted each machine, and proceeded with the setup of a new cluster, by setting up the master node:
-
-INSTALL COMMAND:
-sudo kubeadm init phase certs all && 
- sudo kubeadm init phase kubeconfig all && 
- sudo kubeadm init phase control-plane all --pod-network-cidr 10.244.0.0/16 &&
- sudo sed -i 's/initialDelaySeconds: [0-9][0-9]/initialDelaySeconds: 240/g' /etc/kubernetes/manifests/kube-apiserver.yaml &&
- sudo sed -i 's/failureThreshold: [0-9]/failureThreshold: 18/g' /etc/kubernetes/manifests/kube-apiserver.yaml &&
- sudo sed -i 's/timeoutSeconds: [0-9][0-9]/timeoutSeconds: 20/g' /etc/kubernetes/manifests/kube-apiserver.yaml &&
- sudo kubeadm init \
-   --v=1 \
-   --skip-phases=certs,kubeconfig,control-plane \
-   --ignore-preflight-errors=all \
-   --pod-network-cidr 10.244.0.0/16  
+sudo kubeadm reset -f 
 
 =============================
 KUBERNETES CHEAT SHEET

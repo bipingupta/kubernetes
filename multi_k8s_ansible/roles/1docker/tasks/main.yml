@@ -17,8 +17,6 @@
   vars:
     packages:
     - docker-ce=18.06.2~ce~3-0~ubuntu
-    - docker-ce-cli
-    - containerd.io
   notify:
     - docker status
 
@@ -27,5 +25,16 @@
     name: vagrant
     group: docker
 
+- name: Copy daemon.json to /etc/docker
+  copy:
+    src: /vagrant/daemon.json
+    dest: /etc/docker
+    owner: root
+    group: root
+    mode: '0644'
 
-
+- name: Restart Service Docker
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker

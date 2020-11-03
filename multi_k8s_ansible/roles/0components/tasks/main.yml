@@ -11,9 +11,6 @@
     - curl
     - gnupg-agent
     - software-properties-common
-    - python-apt
-    - mc
-    - ebtables
-    - ethtool
-    - containerd
-    - docker.io
+    - gnupg2
+    - libcurl4-openssl-dev
+    - linux-image-extra-virtual   

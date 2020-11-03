@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 # vagrant plugin install vagrant-cachier
 
-#ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 
 Vagrant.configure("2") do |config|
 
@@ -28,12 +28,12 @@ Vagrant.configure("2") do |config|
 
           kmaster.vm.provider "virtualbox" do |v|
             v.name = "kmaster"
-            v.memory = 4096
+            v.memory = 8192
             v.cpus = 4
           end
       end
 
-      NodeCount = 1
+      NodeCount = 2
       # Kubernetes Worker Nodes
       (1..NodeCount).each do |i|
         config.vm.define "kworker#{i}" do |workernode|
@@ -43,8 +43,8 @@ Vagrant.configure("2") do |config|
           
           workernode.vm.provider "virtualbox" do |v|
             v.name = "kworker#{i}"
-            v.memory = 3072
-            v.cpus = 3
+            v.memory = 4096
+            v.cpus = 4
           end
         end
       end
@@ -54,10 +54,10 @@ Vagrant.configure("2") do |config|
       ansible.config_file = "ansible.cfg"
       ansible.playbook = "playbook.yml"
 #     ansible.skip_tags = "init-calico"
-#     ansible.tags = "reset-kubeadm,init-kubeadm,"
       ansible.groups = {
          masters: ["kmaster"],
          workers: ["kworker1","kworker2"]
         }
    end
+
 end
