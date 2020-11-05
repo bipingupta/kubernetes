@@ -1,0 +1,4 @@
+127.0.0.1 localhost localhost.localdomain
+172.42.42.100 kube.example.com kube
+172.42.42.101 kworker1.example.com kworker1
+172.42.42.102 kworker1.example.com kworker2

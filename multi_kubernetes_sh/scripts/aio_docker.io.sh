@@ -2,7 +2,7 @@
 
 echo "***************************** UPDATING OS *****************************"
 sudo apt update
-#sudo apt-get update
+sudo apt-get update
 sudo apt-get install linux-image-extra-virtual
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common gnupg2 libcurl4-openssl-dev
 
@@ -48,6 +48,11 @@ sudo systemctl restart docker
 sudo systemctl status docker
 sudo docker info
 
+echo "***************************** Disable SWAP && FIREWALL *****************************"
+sudo swapoff -a
+sudo sed -i '/swap/d' /etc/fstab
+#sudo ufw disable
+
 echo "***************************** ADDING KUBERNETES REPO *****************************"
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
@@ -60,19 +65,44 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
 sudo kubeadm config images pull
 
-echo "***************************** Disable SWAP *****************************"
-sudo swapoff -a
+echo "***************************** Restart KUBELET *****************************"
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
 
 echo "***************************** Initializing KUBERNETES CLUSTER Using KUBEADM *****************************"
-sudo kubeadm init  --kubernetes-version stable-1.18 --token-ttl 0 --apiserver-advertise-address=172.42.42.100 --apiserver-cert-extra-sans=172.42.42.100 --pod-network-cidr=10.16.0.0/16 --v=20
+sudo kubeadm init  --kubernetes-version stable-1.18 --token-ttl 0 --apiserver-advertise-address=172.42.42.100 --apiserver-cert-extra-sans=172.42.42.100 --pod-network-cidr=10.16.0.0/16 
+# For Debugging Purpose add --v=20
 
-echo "***************************** Copy PKI KEYS to Home folder *****************************"
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+echo "***************************** Generate join command with token *****************************"
+sudo kubeadm token create --print-join-command > /vagrant/download/kubeadm-join-command.sh
 
-echo "***************************** Add an overlay network *****************************"
-sudo kubectl apply -f /vagrant/download/calico.yaml
-sudo kubectl taint nodes --all node-role.kubernetes.io/master
-kubectl get po -n kube-system
+echo "***************************** Set KUBECONFIG in ENV *****************************"
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+echo "***************************** Add an Calico Overlay Network *****************************"
+sudo kubectl --kubeconfig $KUBECONFIG create -f https://docs.projectcalico.org/v3.15/manifests/calico.yaml
+
+#echo "***************************** Add an Weave Net Overlay Network *****************************"
+#kubectl --kubeconfig $KUBECONFIG apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+echo "***************************** Make master node a running worker node too !! *****************************"
+sudo kubectl --kubeconfig $KUBECONFIG taint nodes --all node-role.kubernetes.io/master-
+
+#echo "***************************** INGRESS-NGINX deployment *****************************"
+#sudo kubectl --kubeconfig $KUBECONFIG apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/cloud/deploy.yaml
+
+echo "***************************** Copy PKI KEYS to Home folder (Vagrant) *****************************"
+sudo bash /vagrant/download/copyadminconf2user.sh
+
+echo "***************************** Kubernetes Dashboard UI *****************************"
+kubectl --kubeconfig $KUBECONFIG create -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+
+echo "***************************** Create the dashboard service account *****************************"
+kubectl --kubeconfig $KUBECONFIG apply -f  /vagrant/download/dashboard-admin.yaml
+kubectl --kubeconfig $KUBECONFIG apply -f  /vagrant/download/dashboard-read-only.yaml
+#kubectl get secret -n kubernetes-dashboard $(kubectl get serviceaccount admin-user -n kubernetes-dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
+
+#kubectl describe secret dashboard-admin-sa-token-kw7vn
+#kubectl proxy
+#http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 

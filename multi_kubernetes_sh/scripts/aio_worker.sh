@@ -2,7 +2,7 @@
 
 echo "***************************** UPDATING OS *****************************"
 sudo apt update
-#sudo apt-get update
+sudo apt-get update
 sudo apt-get install linux-image-extra-virtual
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common gnupg2 libcurl4-openssl-dev
 
@@ -43,13 +43,19 @@ sudo systemctl restart docker
 sudo systemctl status docker
 sudo docker info
 
+echo "***************************** Disable SWAP && FIREWALL *****************************"
+sudo swapoff -a
+sudo sed -i '/swap/d' /etc/fstab
+#sudo ufw disable
+
 echo "***************************** Installing kubeadm & Pulling Images *****************************"
 sudo apt-get update
 sudo apt-get install -yq kubelet=1.18.10\* kubectl=1.18.10\* kubeadm=1.18.10\*
 sudo apt-mark hold kubelet kubeadm kubectl
-sudo kubeadm config images pull
 
-echo "***************************** Disable SWAP *****************************"
-sudo swapoff -a
+echo "***************************** Restart KUBELET *****************************"
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
 
-
+echo "***************************** Join-Command *****************************"
+sudo bash /vagrant/download/kubeadm-join-command.sh

@@ -1,20 +1,4 @@
 =============================
-K8s MULTI-NODE-CLUSTER
-=============================
-https://geekflare.com/install-kubernetes-on-ubuntu/
-
-https://netapp-trident.readthedocs.io/en/stable-v18.07/reference/simple-kubernetes.html
-https://kubernetes.io/blog/2019/03/15/kubernetes-setup-using-ansible-and-vagrant/
-https://github.com/justmeandopensource/kubernetes/tree/master/vagrant-provisioning
-https://michele.sciabarra.com/2018/02/12/devops/Kubernetes-with-KubeAdm-Ansible-Vagrant/
-
-https://playbook.stakater.com/
-https://medium.com/stakater
-
-https://github.com/Praqma/LearnKubernetes/blob/master/kamran/Kubernetes-Fedora-Multi-node.md
-https://blog.inkubate.io/install-and-configure-a-multi-master-kubernetes-cluster-with-kubeadm/
-
-=============================
 Helpful Vagrant Commands
 =============================
 vagrant up               ==>> # (START) If running first time, runs all tasks within provisioning otherwise just starts the VM and ignores all tasks.
