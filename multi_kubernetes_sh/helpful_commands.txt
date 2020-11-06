@@ -1,53 +1,68 @@
 =============================
+Helpful Vagrant Commands
+=============================
+vagrant up               ==>> # (START) If running first time, runs all tasks within provisioning otherwise just starts the VM and ignores all tasks.
+vagrant reload           ==>> # (Re-START) Does not run provisioning but restarts the VM.
+vagrant status
+vagrant halt             ==>> # (STOP) Shuts Down the running machine.
+
+vagrant suspend          ==>> # (HIBERNATE) This suspends the guest machine Vagrant is managing, rather than fully shutting it down.
+vagrant resume           ==>> # (RESUME FROM HIBERNATE)resume the save machine
+
+vagrant destroy -f  ==>> # Stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process forcefully and without confirmation
+vagrant reload --provision  ==>>  # Runs all tasks within provisioning with restarting the VM
+
+vagrant ssh <machine-name>  ==>> # Login to Linux box
+
+vagrant plugin list
+vagrant plugin install vagrant-cachier
+vagrant plugin install hostmanager
+	
+=============================
 Helpful KUBECTL Commands
 =============================
 $ kubectl get namespaces
-$ kubectl cluster-info
 $ kubectl get nodes  -o wide --show-labels --all-namespaces
-$ kubectl describe node
-$ kubectl get svc
+
+$ kubectl -n kubernetes-dashboard get svc
 $ kubectl get pods
 $ kubectl get deployments
 $ kubectl get secrets -A
 $ kubectl -n kube-system describe secret 
 $ kubeadm reset -f
+$ kubectl get svc,pods
 
-=============================
-#https://logz.io/blog/getting-started-with-kubernetes-using-microk8s/
-#https://tutorials.ubuntu.com/tutorial/install-a-local-kubernetes-with-microk8s#2
-#https://microk8s.io/docs/configuring-services
-#https://microk8s.io/
-# sudo snap list
-# sudo microk8s.kubectl api-versions
-# sudo microk8s.kubectl explain clusterroles
+$ kubectl get ns
+$ kubectl describe node
+$ kubectl cluster-info
+$ route
+$ kubectl config view
 
-=============================
-DIAGNOSING DASHBOARD
-=============================
-sudo microk8s.status 
-sudo snap alias microk8s.kubectl kubectl
+$ kubectl -n kubernetes-dashboard describe service kubernetes-dashboard
+$ kubectl -n kubernetes-dashboard get all
 
-sudo microk8s.kubectl cluster-info
+$ kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4
 
-sudo microk8s.kubectl get all --all-namespaces
-sudo microk8s.kubectl get namespaces
+==============================
+CHANGINH CLUSTER to NODEPORT
+==============================
+kubectl -n  kubernetes-dashboard edit service kubernetes-dashboard
+change the .spec.type to NodePort
+VI EDITOR
+(a i o) = Input Mode (Editing Mode)
+Esc to Command mode
+:wq to save and quit
+ 
+==============================
+ACCESSING KUBERNETES DASHBOARD
+==============================
+https://172.42.42.100:32593/#/login
 
-sudo microk8s.kubectl -n kube-system describe service kubernetes-dashboard
+ps -a
+kill -9 <kubectl pid>
+nohup kubectl proxy --address='0.0.0.0' --accept-hosts='^*$' &
 
-############# APPLY PORT-FORWARDING ON POD NOTE: NOT ON SERVICE #############
-sudo microk8s.kubectl apply -f /vagrant/scripts/recommended.yaml
-sudo microk8s.kubectl port-forward -n kube-system pod/kubernetes-dashboard-5c848cc544-9z9sb 8001:8443
-http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-
-sudo microk8s.kubectl -n kubernetes-dashboard get sa kubernetes-dashboard
-sudo microk8s.kubectl -n kubernetes-dashboard describe sa dashboard-admin-sa
-sudo microk8s.kubectl -n kubernetes-dashboard get secret dashboard-admin-sa-token
-sudo microk8s.kubectl -n kubernetes-dashboard describe secret dashboard-admin-sa-token
-
-
-
-
-
+kubectl get secret -n kubernetes-dashboard $(kubectl get serviceaccount admin-user -n kubernetes-dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
 
 
 

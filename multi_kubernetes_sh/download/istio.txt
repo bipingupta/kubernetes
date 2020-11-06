@@ -1,0 +1,57 @@
+#!/bin/bash
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.6.8 TARGET_ARCH=x86_64 sh -
+cd istio-1.7.4
+export PATH=$PWD/bin:$PATH
+istioctl install --set profile=default
+
+#============================
+#ENABLE AUTo-INJECTION
+#============================
+kubectl label namespace default istio-injection=enabled
+
+#============================
+#DEPLOY-BOOKINFO-APPLICATION
+#============================
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+istioctl analyze
+
+#-------------------
+#DEPLOY ADD-ONS
+#-------------------
+kubectl apply -f samples/addons
+
+#-------------------
+#DEPLOY Ingress
+#-------------------
+kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+
+#-------------------
+#Access Application
+#-------------------
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+
+#-------------------
+#HELPFUL COMMANDS
+#-------------------
+kubectl get svc istio-ingressgateway -n istio-system
+kubectl get gateway
+kubectl -n istio-system get deploy
+kubectl get svc,pods
+kubectl describe node
+
+-------------------
+KIALI,GRAPHANA,JAEGER,PROMETHEUS-DASHBOARD
+-------------------
+istioctl dashboard kiali
+istioctl dashboard grafana
+istioctl dashboard jaeger
+istioctl dashboard prometheus
+
+# http://172.42.42.100:31381/productpage
+# kubectl describe service  productpage ==>> Get NodePort
+# http://172.42.42.100:32094/
+
+http://172.42.42.100:30682/

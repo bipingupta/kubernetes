@@ -88,8 +88,12 @@ sudo kubectl --kubeconfig $KUBECONFIG create -f https://docs.projectcalico.org/v
 echo "***************************** Make master node a running worker node too !! *****************************"
 sudo kubectl --kubeconfig $KUBECONFIG taint nodes --all node-role.kubernetes.io/master-
 
-#echo "***************************** INGRESS-NGINX deployment *****************************"
-#sudo kubectl --kubeconfig $KUBECONFIG apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.0/deploy/static/provider/cloud/deploy.yaml
+#echo "***************************** MetalLB Load-Balancer Deployment *****************************"
+kubectl --kubeconfig $KUBECONFIG apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.4/manifests/namespace.yaml
+kubectl --kubeconfig $KUBECONFIG apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.4/manifests/metallb.yaml
+# On first install only
+kubectl --kubeconfig $KUBECONFIG create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+kubectl --kubeconfig $KUBECONFIG create -f /vagrant/download/metallb_ip.yaml
 
 echo "***************************** Copy PKI KEYS to Home folder (Vagrant) *****************************"
 sudo bash /vagrant/download/copyadminconf2user.sh
@@ -100,9 +104,6 @@ kubectl --kubeconfig $KUBECONFIG create -f https://raw.githubusercontent.com/kub
 echo "***************************** Create the dashboard service account *****************************"
 kubectl --kubeconfig $KUBECONFIG apply -f  /vagrant/download/dashboard-admin.yaml
 kubectl --kubeconfig $KUBECONFIG apply -f  /vagrant/download/dashboard-read-only.yaml
-#kubectl get secret -n kubernetes-dashboard $(kubectl get serviceaccount admin-user -n kubernetes-dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
+kubectl get secret -n kubernetes-dashboard $(kubectl get serviceaccount admin-user -n kubernetes-dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
 
-#kubectl describe secret dashboard-admin-sa-token-kw7vn
-#kubectl proxy
-#http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
-
+#https://172.42.42.100:32593/#/login
