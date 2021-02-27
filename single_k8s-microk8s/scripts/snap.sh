@@ -1,11 +1,11 @@
 #!/bin/bash
 
 echo "***************************** Installing SNAP *****************************"
-sudo apt update
+#sudo apt update
 sudo apt install snapd
 
 echo "***************************** Installing Microk8s *****************************"
-sudo snap install microk8s --classic --channel=1.16/stable
+sudo snap install microk8s --classic --channel=1.20/stable
 sudo microk8s.start
 
 echo "***************************** Microk8s - STATUS *****************************"

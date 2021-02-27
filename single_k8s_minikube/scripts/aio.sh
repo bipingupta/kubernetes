@@ -3,7 +3,6 @@
 export CHANGE_MINIKUBE_NONE_USER=true
 
 echo "***************************** Copying Minikube & Kubectl from vagrant shared folder to bin *****************************"
-
 export DOWNLOAD_PACKAGE=/vagrant/download
 export HOME=/usr/local
 

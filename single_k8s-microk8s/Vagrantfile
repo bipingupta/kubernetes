@@ -7,14 +7,14 @@ Vagrant.configure("2") do |config|
 
   # ubuntu_microk8s single cluster kubernetes
   config.vm.define "microk8s" do |microk8s|
-    microk8s.vm.box = "ubuntu/xenial64"
+    microk8s.vm.box = "ubuntu/bionic64"
     microk8s.vm.hostname = "microk8s"
   	microk8s.vm.network "forwarded_port", guest: 443, host: 8001
     microk8s.vm.network "private_network", ip: "172.42.42.100"
 	
     microk8s.vm.provider "virtualbox" do |v|
       v.name = "microk8s"
-      v.memory = 4096
+      v.memory = 8192
       v.cpus = 4
     end
 	
