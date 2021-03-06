@@ -16,7 +16,6 @@ $ kubectl get secrets -A
 $ kubectl -n kube-system describe secret 
 $ kubeadm reset -f
 
-
 =============================
 Multi-CLuster Minikube =>> https://minikube.sigs.k8s.io/docs/start/linux/
 
@@ -37,13 +36,32 @@ sudo kubectl -n kubernetes-dashboard get all
 
 ############# PORT FORWARDING #############
 sudo kubectl -n kubernetes-dashboard describe service kubernetes-dashboard
-############# APPLY PORT-FORWARDING ON POD NOTE: NOT ON SERVICE #############
+
+############# NOTE :: APPLY PORT-FORWARDING ON POD <<<==>>> NOT ON SERVICE #############
+kubectl proxy --address='0.0.0.0'
 sudo kubectl -n kubernetes-dashboard port-forward  kubernetes-dashboard-5996555fd8-27kq8 8001:8443
 
-http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy
+http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#!/login
 
 sudo kubectl -n kubernetes-dashboard get sa
 sudo kubectl -n kubernetes-dashboard describe sa dashboard-admin-sa
 sudo kubectl -n kubernetes-dashboard get secret dashboard-admin-sa-token
 sudo kubectl -n kubernetes-dashboard describe secret dashboard-admin-sa-token
+
+=============================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

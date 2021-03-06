@@ -15,6 +15,7 @@ sudo apt-get install conntrack
 
 echo "***************************** Start M i n i k u b e *****************************"
 minikube start --vm-driver=none
+#minikube start --nodes 2 -p multinode-demo --vm-driver=none
 cat ~/.kube/config
 kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
 minikube addons enable dashboard
