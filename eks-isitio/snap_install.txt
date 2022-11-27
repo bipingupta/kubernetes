@@ -1,0 +1,67 @@
+
+$ sudo apt update
+$ sudo apt install snapd
+$ snap --version
+
+sudo snap install helm --classic
+sudo snap install curl
+
+sudo snap install b1freearchiver
+sudo snap install acrordrdc
+sudo snap install notepad-plus-plus
+
+
+sudo snap install vlc
+sudo snap install chromium
+
+=============================
+-------- AWSCLI_v2 ---------
+=============================
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+aws --version
+
+===========================
+----- K U B E C T L ------
+===========================
+curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.24.7/2022-10-31/bin/linux/amd64/kubectl
+openssl sha1 -sha256 kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+kubectl version --short --client
+
+============================
+-- aws-iam-authenticator --
+============================
+curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+chmod +x ./aws-iam-authenticator
+sudo mv ./aws-iam-authenticator /usr/local/bin
+aws-iam-authenticator help
+
+==========================
+------ E K S C T L -------
+==========================
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+
+==========================
+------ CROSSPLANE -------
+==========================
+curl -sL https://raw.githubusercontent.com/crossplane/crossplane/release-1.0/install.sh | sh
+sudo mv kubectl-crossplane /snap/bin
+
+==========================
+----UPDATE KUBECONFIG----
+==========================
+aws eks update-kubeconfig --name eksdemo1 --region ap-south-1
+kubectl cluster-info
+
+----------------------------------------
+Resolve below issue using above command
+----------------------------------------
+https://github.com/aws/aws-cli/issues/6920
+Unable to connect to the server: getting credentials: decoding stdout: no kind "ExecCredential" is registered for version "client.authentication.k8s.io/v1alpha1" in scheme "pkg/client/auth/exec/exec.go:62"
+
+

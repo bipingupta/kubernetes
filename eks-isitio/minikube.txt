@@ -1,0 +1,73 @@
+============================
+MINIKUBE
+============================
+minikube start --vm-driver virtualbox --memory 8192 --cpus 4 --show-libmachine-logs --alsologtostderr
+minikube delete, minikube start, minikube status, 
+minikube version, minikube update-check
+minikube ssh
+minikube update-context
+
+----------------------------
+MULTI-NODE
+----------------------------
+kubectl get nodes
+Start minikube multi-node    ==>>  minikube start --vm-driver virtualbox --memory 8192 --cpus 4 --nodes 2 -p multinode-demo
+minikube status -p multinode-demo
+
+----------------------------
+CHECK MINIKUBE STATUS
+----------------------------
+kubectl cluster-info
+minikube service <srv-name>
+minikube dashboard  ////  minikube dashboard --url=true
+kubectl proxy  ////  http://localhost:8001/ui
+minikube ip
+minikube logs
+minikube addons list
+minikube addons enable heapster, kubectl top node
+kubectl get nodes
+
+----------------------------
+ssh minikube VM
+----------------------------
+ssh -i ~/.minikube/machines/minikube/id_rsa docker@$(minikube ip)
+ssh minikube
+
+============================
+DEPLOY MICROSERVICE & TEST 
+============================
+kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4
+kubectl get deployments
+kubectl get pods
+kubectl get events
+kubectl config view
+kubectl expose deployment hello-node --type=LoadBalancer --port=8080
+kubectl get services
+minikube service hello-node
+minikube service --url=true hello-node
+
+kubectl get pods -w
+kubectl get pod,service -n kube-system
+kubectl get all
+kubectl get svc --all-namespaces
+
+kubectl api-resources
+
+----------------------------
+VIEW POD LOGS
+----------------------------
+kubectl logs <POD-NAME>
+kubectl logs hello-node-57c6b66f9c-7j2k6
+
+----------------------------
+DELETE MICROSERVICE
+----------------------------
+kubectl delete service hello-node
+kubectl delete deployment hello-node
+
+----------------------------
+SCALE MICROSERVICE
+----------------------------
+kubectl scale --replicas=3 deployment/hello-nginx
+
+curl localhost:8080/random

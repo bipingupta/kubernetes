@@ -1,0 +1,94 @@
+=====================================
+CHOCO - INSTALLTION from POWERSHELL
+=====================================
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+
+=======================
+CHOCO - SEARCH
+=======================
+choco search chrome
+
+=======================
+CHOCO - LIST
+=======================
+choco list --local-only
+
+=======================
+CHOCO - UPGRADE
+=======================
+choco upgrade all
+
+=======================
+CHOCO - INSTALL PACKAGE
+=======================
+choco install chocolateygui
+
+choco install kind
+choco install minikube
+
+choco install kubernetes-cli	// kubectl install
+choco install aws-iam-authenticator
+choco install awscli
+choco install eksctl
+choco install argocd-cli
+choco install kubernetes-helm
+choco install istioctl
+
+choco install octant
+choco install terraform
+choco install packer
+
+choco install kubectx  		// https://ahmet.im/blog/kubectx/
+choco install kubens   		// switch between Kubernetes namespaces.
+choco install stern    		// To display the tail end of logs for containers and multiple pods.
+
+choco install nodejs-lts
+choco install nodejs
+choco install yarn
+choco install jsonedit
+choco install fiddler4
+
+choco install winrar
+choco install adobereader
+choco install notepadplusplus
+choco install calibre
+
+choco install potplayer
+choco install vlc
+choco install firefox
+choco install googlechrome
+
+choco install curl
+choco install cmder
+choco install jq --version=1.5
+choco install postman
+choco install maven
+choco install openjdk13
+
+choco install vagrant
+choco install virtualbox
+choco install virtualbox-guest-additions-guest.install
+choco install git
+choco install tortoisegit
+
+choco install kindle
+choco install coretemp
+
+=======================
+CHOCO - CHECK
+=======================
+choco install lockhunter
+
+choco install windirstat
+
+choco install sysinternals
+choco install powertoys
+choco pin add -n=powertoys
+choco install procexp
+choco install procmon
+
+rem This is interactive - therefore no installation
+rem choco install windowsessentials
+rem choco install autoruns
+
+

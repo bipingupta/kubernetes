@@ -1,0 +1,18 @@
+https://dzone.com/articles/terraform-cli-cheat-sheet
+https://lzone.de/cheat-sheet/Terraform
+
+============================
+TERRRAFORM
+============================
+choco install -y terraform --pre
+terraform -version
+terraform init
+terraform plan
+terraform apply -auto-approve
+terraform destroy -auto-approve
+terraform state list/show
+
+============================
+TERRRAFORMER
+============================
+choco install terraformer

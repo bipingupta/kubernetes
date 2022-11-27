@@ -1,0 +1,67 @@
+============================
+MAVEN
+============================
+mvn spring-boot:run
+mvn compile
+mvn package -DskipTests=true
+mvn clean install
+mvn compiler:compiler
+mvn install
+mvn test
+mvn dependency:tree
+mvn dependency:analyze
+mvn eclipe:clean
+mvn eclipse:eclipse
+
+============================
+GIT
+============================
+git init
+git clone
+git add
+git commit
+git reset
+git status
+git rm
+git log
+git show
+git tag
+git branch
+git checkout
+git merge
+git remote
+git push
+git pull
+git stash
+
+============================
+JIB-Plugin (Build and Push Docker Image to Registry)
+============================
+# Builds to a container image registry.
+mvn compile jib:build -Djib.to.auth.username=bipingupta007 -Djib.to.auth.password=thunder007
+# Builds to a Docker daemon.
+mvn compile jib:dockerBuild
+
+============================
+JKube-Plugin (Build and Push Docker Image to Kubernetes)
+============================
+mvn k8s:help
+mvn clean install k8s:build k8s:resource k8s:apply
+mvn k8s:resource k8s:deploy
+
+
+# Create Kubernetes resource descriptors.
+mvn clean k8s:resource -Pkubernetes
+# Start docker build by hitting the build goal.
+mvn package k8s:build -Pkubernetes
+# Deploy your application on Kubernetes cluster.
+mvn k8s:deploy -Pkubernetes
+
+Goal 	        Description
+k8s:resource 	Create Kubernetes resource descriptors
+k8s:build 	    Build Docker images
+k8s:push 	    Push Docker images to a registry
+k8s:deploy 	    Deploy Kubernetes resource objects to a cluster
+k8s:watch 	    Watch for doing rebuilds and restarts
+k8s:undeploy
+k8s:log

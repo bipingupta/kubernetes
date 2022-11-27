@@ -1,0 +1,272 @@
+============================
+AWS-EKS (INSTALL awscli,kubectl,iam-authenticator)
+============================
+choco install -y awscli
+choco install -y kubectl
+choco install -y aws-iam-authenticator
+aws-iam-authenticator help
+aws configure
+kubectl version
+
+-------------------
+TESTING AWSCLI
+-------------------
+aws ec2 describe-vpcs
+aws ec2 describe-regions
+aws ec2 describe-availability-zones --region ap-south-1
+
+============================
+KUBECTL
+============================
+https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+kubectl config get-contexts                          # display list of contexts 
+kubectl config current-context                       # display the current-context
+kubectl config use-context my-cluster-name           # set the default context to my-cluster-name
+kubectl config delete-context  my-cluster-name       # delete context    
+kubectl get nodes
+
+============================
+EKSCTL
+============================
+choco install -y --force eksctl
+eksctl version
+
+BASIC COMMANDS
+Step-01: Create EKS Cluster using eksctl
+eksctl create cluster --name eksdemo1 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --without-nodegroup 
+
+Step-02: Create & Associate IAM OIDC Provider for our EKS Cluster
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster eksdemo1 --approve
+
+Step-03: Create EC2 Keypair
+
+Step-04: Create Public Node Group with additional Add-Ons in Public Subnets
+eksctl create nodegroup --cluster=eksdemo1 --region=ap-south-1 --name=eksdemo1-ng-public1 --node-type=t3.medium --nodes=2 --nodes-min=2 --nodes-max=4 --node-volume-size=20 --ssh-access --ssh-public-key=kube-demo --managed --asg-access --external-dns-access --full-ecr-access --appmesh-access --alb-ingress-access 
+
+Step-05: Delete a node group (This will cordon the node & drain pod to others)
+eksctl delete nodegroup --cluster=eksdemo1 --name=eksdemo1-ng-public1
+
+Step-06: Delete cluster
+eksctl delete cluster --name eksdemo1
+
+# List all cluster
+eksctl get cluster
+# List all nodegroup in the cluster
+eksctl get nodegroup --cluster eksdemo1
+# Scale nodes in a nodegroup
+eksctl scale nodegroup --cluster=eksdemo1 --nodes=4 --name=eksdemo1-ng-public1
+
+kubectl get nodes -o wide
+kubectl config view --minify
+kubectl cluster-info
+kubectl config get-contexts -o name
+kubectl port-forward svc/nginx  -n default 8081:80
+============================
+ECR
+============================
+aws ecr create-repository --repository-name hello-repository --region ap-south-1
+docker tag bipingupta007/greeting 084881757763.dkr.ecr.ap-south-1.amazonaws.com/hello-repository
+aws ecr get-login-password | docker login --username AWS --password-stdin 084881757763.dkr.ecr.ap-south-1.amazonaws.com/hello-repository
+docker push 084881757763.dkr.ecr.ap-south-1.amazonaws.com/hello-repository
+aws ecr delete-repository --repository-name hello-repository --region ap-south-1 --force
+
+============================
+ISTIO-usign-ISTIOCTL
+============================
+https://istio.io/latest/docs/setup/install/helm/
+istioctl profile list
+istioctl install --set profile=default
+kubectl label namespace default istio-injection=enabled
+istioctl analyze
+
+$ kubectl get namespace -L istio-injection
+$ kubectl get crds | grep 'istio.io'
+$ kubectl get svc -n istio-system
+$ kubectl get pods -n istio-system
+$ kubectl get --namespace=istio-system svc,deployment,pods,job,horizontalpodautoscaler,destinationrule
+
+------------------------------------------------
+ISTIO-ADDONS (KIALI,GRAPHANA,JAEGER,PROMETHEUS)
+------------------------------------------------
+kubectl apply -f samples/addons
+kubectl -n istio-system get deploy
+
+--------------------------------------------
+KIALI,GRAPHANA,JAEGER,PROMETHEUS-DASHBOARD
+-------------------------------------------
+istioctl dashboard kiali
+istioctl dashboard grafana
+istioctl dashboard jaeger
+istioctl dashboard prometheus
+
+-----------------------
+WEAVE SCOPE-DASHBOARD
+-----------------------
+kubectl create -f "https://cloud.weave.works/launch/k8s/weavescope.yaml"
+OR
+kubectl apply -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+kubectl port-forward -n weave "$(kubectl get -n weave pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}')" 4040
+The URL is: http://localhost:4040
+
+============================
+DEPLOY-BOOKINFO-APPLICATION
+============================
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl get svc,pods
+
+============================
+EXPOSE-BOOKINFO-APPLICATION
+============================
+kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+https://aws.amazon.com/blogs/opensource/getting-started-istio-eks/
+
+-------------------
+Define Ingress
+-------------------
+kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+kubectl get gateway
+-------------------
+Access Application
+-------------------
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+
+http://a30d2d31f2214497784ae250585625a4-282264558.ap-south-1.elb.amazonaws.com/productpage
+
+echo "Accessing bookinfo at http://${GATEWAY_URL}/productpage"
+open http://${GATEWAY_URL}/productpage    # Open browser, OS/X only.
+
+============================
+------ H E L M ------
+============================
+choco install -y kubernetes-helm
+    helm version --short
+    helm search: search for charts
+    helm fetch: download a chart to our local directory to view
+    helm install: upload the chart to Kubernetes
+    helm list: list releases of charts
+
+helm repo add stable  https://charts.helm.sh/stable
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+
+helm search repo bitnami/nginx
+helm install bitnami/nginx mywebserver
+helm install dashboard-demo stable/kubernetes-dashboard --set rbac.clusterAdminRole=true
+
+helm list
+helm uninstall mywebserver
+helm delete mywebserver
+
+kubectl get svc,po,deploy
+kubectl describe deployment mywebserver
+kubectl get pods -l app.kubernetes.io/name=nginx
+kubectl get service mywebserver-nginx -o wide
+kubectl get pods -n kube-system
+
+============================
+MYSQL
+============================
+yum install mysql-server
+chkconfig mysqld on
+service mysqld start
+
+mysqladmin -u root password test1234
+mysql -uroot -p
+
+mysql> show databases;
+mysql> show tables; 
+
+JAVA 
+yum install java-1.8.0-openjdk
+alternatives --config java
+
+ECLIPSE-Setting.xml
+-vm
+C:\Program Files\Java\jdk1.8.0_191\bin\javaw.exe
+
+=========================================
+JIB-Plugin
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>2.4.0</version>
+				<configuration>
+					<from>
+						<image>openjdk:8-jre</image>
+					</from>
+					<to>
+						<image>docker.io/bipingupta007/jib-spring-boot-app</image>
+					</to>
+					<container>
+						<environment>
+							<_JAVA_OPTIONS>'-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'</_JAVA_OPTIONS>
+							<swarm.http.port>8080</swarm.http.port>
+						</environment>
+						<ports>
+							<port>8080</port>
+							<port>5005</port>
+						</ports>
+					</container>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>dockerBuild</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+=========================================			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
