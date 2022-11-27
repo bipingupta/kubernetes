@@ -1,0 +1,20 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: sample-sg2
+spec:
+  forProvider:
+    vpcIdRef:
+      name: sample-vpc
+    groupName: demo-sg
+    region: ap-south-1
+    description: Demo SG to connect tot he EC2 instance
+    ingress:
+      - fromPort: 22
+        toPort: 22
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+  providerConfigRef:
+    name: default
+    

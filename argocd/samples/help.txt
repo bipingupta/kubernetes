@@ -1,0 +1,6 @@
+https://github.com/argoproj/argocd-example-apps
+
+
+https://cd.apps.argoproj.io/applications?page=1&showFavorites=false&proj=&sync=&health=&namespace=&cluster=&labels=
+https://github.com/argoproj/argoproj-deployments
+https://github.com/argoproj/argoproj-deployments/tree/master/argoproj/base

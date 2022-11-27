@@ -1,0 +1,310 @@
+##################### Pre-requisite #########################################################################################
+## AWS CLI
+
+## Chocolatey links (installer - for argocd cli deployment)
+https://chocolatey.org/install
+## choco install chocolateygui
+## choco install kubernetes-cli	// kubectl install
+## choco install aws-iam-authenticator
+## choco install awscli         // aws
+## choco install eksctl
+## choco install argocd-cli
+## choco install kubernetes-helm
+
+
+#############################################################################################################################
+##################### Create AWS EKS cluster ################################################################################
+## Create EKS cluster using EKSCTL
+
+BASIC COMMANDS
+Step-01: Create EKS Cluster using eksctl
+eksctl create cluster --name eksdemo1 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --without-nodegroup 
+
+Step-02: Create & Associate IAM OIDC Provider for our EKS Cluster
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster eksdemo1 --approve
+
+Step-03: Create EC2 Keypair
+
+Step-04: Create Public Node Group with additional Add-Ons in Public Subnets
+eksctl create nodegroup --cluster=eksdemo1 --region=ap-south-1 --name=eksdemo1-ng-public1 --node-type=t3.medium --nodes=2 --nodes-min=2 --nodes-max=4 --node-volume-size=20 --ssh-access --ssh-public-key=kube-demo --managed --asg-access --external-dns-access --full-ecr-access --appmesh-access --alb-ingress-access 
+
+Step-05: Delete a node group (This will cordon the node & drain pod to others)
+eksctl delete nodegroup --cluster=eksdemo1 --name=eksdemo1-ng-public1
+
+Step-06: Delete cluster
+eksctl delete cluster --name eksdemo1
+
+# List all cluster
+eksctl get cluster
+# List all nodegroup in the cluster
+eksctl get nodegroup --cluster eksdemo1
+# Scale nodes in a nodegroup
+eksctl scale nodegroup --cluster=eksdemo1 --nodes=4 --name=eksdemo1-ng-public1
+
+kubectl get nodes -o wide
+kubectl config view --minify
+kubectl cluster-info
+kubectl config get-contexts -o name
+kubectl port-forward svc/nginx  -n default 8081:80
+
+############################################ ArgoCD Server installtion on kubernetes ###################################
+## Installing Argo CD on Your Cluster
+1.Check if kubectl is working as expected
+  kubectl get nodes
+  
+2.Create namespace
+  kubectl create namespace argocd
+  
+3.Run the Argo CD install script provided by the project maintainers.
+  kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  
+4. Check the status of your Kubernetes pods
+  kubectl get pods -n argocd
+
+5.1.2 ## Access ArgoCD using NodePort (Change ClusterIP to NodePort)
+  kubectl get pods -n argocd
+  kubectl -n argocd edit svc argocd-server
+  change almost last line ==>> ClusterIP -> NodePort
+
+## Forwarding Ports to Access Argo CD
+5.1. Retrieve the admin password which was automatically generated during your installation and decode from base64 from online.
+  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}"
+  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+Decode the password from online (https://www.base64decode.org/)
+
+Decoded Password => OysLzLEg1k4d4D9T
+
+5.2 forward those to arbitrarily chosen other ports, like 8080, like so:
+  kubectl port-forward svc/argocd-server -n argocd 8080:443
+  
+5.3 Access from internet from browser.
+  http://localhost:8080 
+  user id : admin
+  password :base64 decoded password.
+
+5.4 Scale manually 
+   kubectl scale deploy nginx --replicas 2
+   
+## Working with Argo CD from the Command Line
+6. Use chocolatey utility to install in Windows ( with admin access)
+   choco install argocd-cli
+   
+## Deploying an Example Application from argocd using argocd cli
+7. Deploying an Example Application
+  argocd login localhost:8080
+  user id : admin
+  password :base64 decoded password.
+  argocd app create helm-guestbook --repo https://github.com/argoproj/argocd-example-apps.git --path helm-guestbook --dest-server https://kubernetes.default.svc --dest-namespace default
+  
+7.1 Check status inside argocd
+  argocd app get helm-guestbook
+
+7.2 Actually deploy the application
+  argocd app sync helm-guestbook
+
+7.3 Port foward from onther session check the application status
+  kubectl port-forward svc/helm-guestbook 9090:80
+  http://localhost:9090
+  
+  
+https://github.com/justmeandopensource/argocd-demo
+kubectl scale deploy nginx --replicas 2
+
+############################################ INSTALLING CROSSPLANE-CLI HELM ############################################
+https://docs.aws.amazon.com/eks/latest/userguide/helm.html
+https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/
+https://www.densify.com/kubernetes-tools/helm-eks
+
+choco install kubernetes-helm
+
+########### INSTALLING CROSSPLASE USING HELM ############
+kubectl create namespace crossplane-system
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update
+helm install crossplane --namespace crossplane-system crossplane-stable/crossplane
+kubectl -n crossplane-system get all
+kubectl -n crossplane-system get pods
+
+## INSTALLING CROSSPLASE-CLI
+curl -sL https://raw.githubusercontent.com/crossplane/crossplane/master/install.sh | sh
+
+########### CONVERT TERRAFORM to CROSSPLASE PROVIDER ############
+Terrajet - Generate Crossplane Providers from any Terraform Provide
+https://github.com/crossplane/terrajet
+https://github.com/crossplane-contrib/provider-jet-aws
+
+############################################ INSTALL CROSSPLANE AWS PROVIDER ############################################
+A “provider” in Crossplane is a bunch of CRDs and their controllers, creating an interface to a cloud provider API (in fact, any API).
+We’ll use AWS for demonstration here.
+
+------------ Install Configuration Package on Default VPC ------------
+kubectl crossplane install provider crossplane/provider-aws:v0.27.0
+kubectl -n crossplane-system get deployment.apps
+watch kubectl get pkg
+kubectl get crds
+kubectl get provider
+
+------------ Get AWS Account Keyfile ------------
+AWS_PROFILE=default && echo -e "[default]\naws_access_key_id = $(aws configure get aws_access_key_id --profile $AWS_PROFILE)\naws_secret_access_key = $(aws configure get aws_secret_access_key --profile $AWS_PROFILE)" > creds.conf
+------------ Create a Provider Secret ------------
+kubectl create secret generic aws-creds -n crossplane-system --from-file=creds=./creds.conf
+------------ Configure the AWS Provider ------------
+kubectl create -f providerconfig.yaml
+
+We will create the following ProviderConfig object to configure credentials for AWS Provider:
+
+apiVersion: aws.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: crossplane-system
+      name: aws-creds
+      key: creds
+
+kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release-1.8/docs/snippets/configure/aws/providerconfig.yaml
+
+################################### INFRA PROVISIONING usign CROSSPLANE SAMPLE ###################################
+
+EKS Cluster        -> https://www.kloia.com/blog/production-ready-eks-cluster-with-crossplane
+					  https://github.com/cem-altuner/crossplane-prod-ready-eks
+
+VPC 			   -> https://www.tinfoilcipher.co.uk/2022/09/01/crossplane-infrastructure-as-code-for-kubernetes-platform-teams/
+
+
+PostgreSQLInstance -> https://crossplane.io/docs/v1.8/getting-started/provision-infrastructure.html
+PostgreSQLInstance -> using our own custom composite resources (XRs) and compositions (https://crossplane.io/docs/v1.8/getting-started/create-configuration.html)
+PostgreSQLInstance -> https://www.innoq.com/en/articles/2022/07/infrastructure-self-service-with-crossplane/
+
+S3 Bucket -> https://pet2cattle.com/2022/02/crossplane-aws-provider
+S3 Bucket -> https://medium.com/expedia-group-tech/crossplane-implementation-integration-with-aws-16f6143644d4
+
+iam-route53 -> https://medium.com/expedia-group-tech/crossplane-implementation-integration-with-aws-16f6143644d4
+k8s cluster -> https://github.com/saiyam1814/kcd-chennai/tree/main/infra
+
+github example for argocd (infra & application) -> https://github.com/saiyam1814/kcd-chennai
+
+################################### ARGO REPO LIST  ###################################
+helm repo add stable https://charts.helm.sh/stable --force-update
+HELM CHARTS  (Update & Search in HELM charts repo)            ->   https://charts.helm.sh/stable
+HELM APP (tick Recursive option, Folder name ex: guestbook)   ->   https://github.com/argoproj/argocd-example-apps.git 
+https://github.com/justmeandopensource/argocd-demo
+
+
+kubectl get all -n crossplane-system
+
+------------ DEBUGGING AWS Infrasture ------------
+kubectl describe -n crossplane-system rdsinstances.database.aws.crossplane.io my-db 
+kubectl describe -n crossplane-system  my-db
+
+
+################################### BUILD & DEPLOY COMPOSITE RESOURCES using CROSSPLANE  ###################################
+
+---------- Build Package ------------------
+# To build a provider package
+kubectl crossplane build provider
+# To build a configuration package
+kubectl crossplane build configuration
+# To build for all platforms, you can run:
+make build.all
+
+---------- Publish Package -----------------
+# To push a provider package
+kubectl crossplane push provider $ORG_NAME/$PROVIDER_NAME:$PROVIDER_VERSION
+# To push a configuration package
+kubectl crossplane push configuration $ORG_NAME/$CONFIGURATION_NAME:$CONFIGURATION_VERSION
+# As an example, I want to push my configuration package with version v0.0.1 to quay.io:
+kubectl crossplane push configuration quay.io/morningspace/my-test-configuration:v0.0.1
+# Push to Registry other than Docker Hub
+By default, most Crossplane providers use Docker Hub as the target registry. 
+Firstly, you need to modify the provider crossplane.yaml file, change the spec.controller.image to point to the right registry. 
+Otherwise, when install the provider, it will still go back to check Docker Hub. Below is an example:
+
+apiVersion: meta.pkg.crossplane.io/v1alpha1
+kind: Provider
+metadata:
+  name: provider-kubernetes
+  annotations:
+    descriptionShort: |
+      The Crossplane Kubernetes provider enables management of Kubernetes Objects.
+spec:
+  controller:
+    image: quay.io/morningspace/provider-kubernetes-controller-amd64:VERSION
+
+# DOCKER_REGISTRY = crossplane
+DOCKER_REGISTRY = quay.io/morningspace
+
+---------- Install Package -----------------
+Now that you have pushed provider and configuration packages to the target registry, 
+you can install them on clusters using Crossplane CLI from anywhere. 
+Choose one of the below commands to execute, depending on which type of package you are going to install:
+
+# To install a provider package
+kubectl crossplane install provider $ORG_NAME/$PROVIDER_NAME:$PROVIDER_VERSION
+# To install a configuration package
+kubectl crossplane install configuration $ORG_NAME/$CONFIGURATION_NAME:$CONFIGURATION_VERSION
+
+If it is installed successfully, you should see the CompositeResourceDefinition and Composition definitions included in this package are installed on the cluster.
+ It will also install its dependency, the provider package.
+
+---------- Troubleshooting Tips -----------------
+To verify the install results, you can run:
+kubectl get crossplane
+
+When there are errors, you can run below command which gives you detailed information of all packages that are being installed:
+kubectl get lock -o yaml
+
+Step 1: ---------- Deploy Compositions -----------------
+kubectl apply -f compositions/aws-provider/dynamodb 
+
+Check and make sure the XRD is ready to be used. Note: The field is set to True when it is ready to be used.
+kubectl get xrd xdynamodbtables.awsblueprints.io 
+
+Step 2: ---------- Deploy a DynamoDB example -----------------
+To provision a resource using this Composition, take a look at the examples directory. 
+It contains various examples of using Compositions available in this repository. 
+Let’s create a table with on-demand capacity and partition key.
+
+kubectl apply -f examples/aws-provider/composite-resources/dynamodb/dynamodb-on-demand-partition.yaml
+
+kubectl get dynamodbtable.awsblueprints.io/test-table-on-demand-partition-key 
+
+kubectl describe dynamodbtable.awsblueprints.io/test-table-on-demand-partition-key
+
+Step 2: ---------- Clean up -----------------
+# Remove claim: 
+$ kubectl delete -f examples/aws-provider/composite-resources/dynamodb/dynamodb-on-demand-partition.yaml 
+
+# Remove compositions and XRDs: 
+$ kubectl delete -f compositions/aws-provider/dynamodb 
+
+# Remove cluster (eksctl) 
+$ eksctl delete cluster -f eksctl.yaml 
+
+# Remove cluster (terraform) 
+$ terraform destroy --auto-approve
+
+################################### KUBERNETES-DASHBOARD  ###################################
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
+kubectl apply -f eks-admin-service-account.yaml
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
+kubectl proxy
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#!/login
+
+################################### RESET KUBECONFIG  ###################################
+aws eks update-kubeconfig --name eksdemo1 --region ap-south-1
+
+################################ SET NAMESPACE CONTEXT  ################################
+kubectl config set-context --current --namespace=crossplane-system
+
+
+
+
+
+
+
+
