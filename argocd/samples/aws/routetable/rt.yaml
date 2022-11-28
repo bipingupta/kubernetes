@@ -4,14 +4,18 @@ metadata:
   name: routetable
 spec:
   forProvider:
-    region: ap-south-1
+    region: $(REGION)a
     routes:
       - destinationCidrBlock: 0.0.0.0/0
         gatewayIdRef:
           name: sample-internetgateway
     associations:
+   - subnetIdRef:
+          name: subnet-a
       - subnetIdRef:
-          name: sample-subnet
+          name: subnet-b
+      - subnetIdRef:
+          name: subnet-c
     vpcIdRef:
       name: sample-vpc
   providerConfigRef:

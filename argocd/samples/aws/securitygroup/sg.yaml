@@ -7,7 +7,7 @@ spec:
     vpcIdRef:
       name: sample-vpc
     groupName: demo-sg
-    region: ap-south-1
+    region: $(REGION)
     description: Demo SG to connect tot he EC2 instance
     ingress:
       - fromPort: 22

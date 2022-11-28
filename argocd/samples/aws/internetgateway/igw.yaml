@@ -4,7 +4,7 @@ metadata:
   name: sample-internetgateway
 spec:
   forProvider:
-    region: ap-south-1
+    region: $(REGION)
     vpcIdRef:
       name: sample-vpc
   providerConfigRef:

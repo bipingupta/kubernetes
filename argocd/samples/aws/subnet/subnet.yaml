@@ -1,11 +1,42 @@
+---
 apiVersion: ec2.aws.crossplane.io/v1beta1
 kind: Subnet
 metadata:
-  name: sample-subnet
+  name: subnet-a
 spec:
   forProvider:
     region: ap-south-1
-    availabilityZone: ap-south-1a
+    availabilityZone: $(REGION)a
+    cidrBlock: 10.0.10.0/24
+    vpcIdRef:
+      name: sample-vpc
+    mapPublicIPOnLaunch: true
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: subnet-b
+spec:
+  forProvider:
+    region: ap-south-1
+    availabilityZone: $(REGION)a
+    cidrBlock: 10.0.10.0/24
+    vpcIdRef:
+      name: sample-vpc
+    mapPublicIPOnLaunch: true
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: subnet-c
+spec:
+  forProvider:
+    region: ap-south-1
+    availabilityZone: $(REGION)a
     cidrBlock: 10.0.10.0/24
     vpcIdRef:
       name: sample-vpc

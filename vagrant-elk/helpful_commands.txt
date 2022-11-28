@@ -22,20 +22,14 @@ vagrant plugin list
 vagrant plugin install vagrant-cachier
 vagrant plugin install hostmanager
 
-=============================
-Helpful My-SQL Commands
-=============================
-sudo service mysql restart
-mysql -u root -proot
+=============================================================================================
+max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+=============================================================================================
+For MS Windows users, using wsl subsystem
+Open powershell, run
+wsl -d docker-desktop
+then
+sysctl -w vm.max_map_count=262144
 
-mysql -u username -proot < example.sql
 
-SHOW DATABASES;
-CREATE DATABASE testdb;
-SHOW CREATE DATABASE testdb;
-USE testdb;
-DROP DATABASE testdb;
-EXIT
-GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' IDENTIFIED BY 'password';
 
-http://172.42.42.42:8306/phpmyadmin
