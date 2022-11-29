@@ -1,0 +1,20 @@
+# Default values for istio-bookinfo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+gateway:
+  selector: ingressgateway
+  hostname: example.com
+
+  httpsRedirect: true
+
+  tls:
+    enabled: true
+    secretName: bookinfo-tls
+    acme:
+      enabled: true
+      certManager:
+        version: certmanager.k8s.io/v1alpha1
+      renewBefore: 720h
+      issuerName: letsencrypt
+      issuerKind: ClusterIssuer
