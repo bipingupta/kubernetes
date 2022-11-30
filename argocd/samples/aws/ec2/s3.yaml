@@ -1,0 +1,10 @@
+apiVersion: s3.aws.crossplane.io/v1beta1
+kind: Bucket
+metadata:
+  name: sample-s3
+spec:
+  forProvider:
+    locationConstraint: ap-south-1
+    acl: private
+  providerConfigRef:
+    name: default

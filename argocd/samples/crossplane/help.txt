@@ -1,0 +1,19 @@
+kubectl create namespace crossplane-system
+
+helm upgrade --install crossplane crossplane-stable/crossplane --namespace crossplane-system  --create-namespace --wait
+
+kubectl apply -f crossplane-config/provider-aws.yaml
+kubectl apply -f crossplane-config/provider-config-aws.yaml
+kubectl apply -f crossplane-config/provider-helm.yaml
+kubectl apply -f crossplane-config/provider-kubernetes.yaml
+kubectl apply -filename crossplane-config/config-k8s.yaml
+
+kubectl get pkgrev
+
+Run the following command to build package.
+
+kubectl crossplane build configuration --name k8s  
+
+Run the following command to push your package to dockerhub.
+
+kubectl crossplane push configuration <your_registry>/crossplane-k8s:v0.2.14
