@@ -1,0 +1,361 @@
+----------------------------------------------------
+******** F I N D - COMMANDS **************   
+----------------------------------------------------
+find /opt  -type f -name Response.properties
+find / -type f -name jboss-cli.sh
+locate jdk
+readlink -f $(which java) 
+
+----------------------------------------------------
+******** A L I A S - COMMANDS **************   
+----------------------------------------------------
+alias running_services='systemctl list-units  --type=service  --state=running'
+alias find_file='find /opt  -type f -name'
+
+alias ifconfig="ip -c a | sed -e 's/\// \//g'"
+
+----------------------------------------------------
+******** V I - COMMANDS **************   
+----------------------------------------------------
+vi FILE_NAME
+INSERT MODE ==>> press 'ESC' key followed by 'i' key
+FILE SAVE   ==>> press 'ESC' key followed by :wq! Keys
+
+vi /etc/hosts
+----------------------------------------------------
+******** R E M O V E - COMMANDS **************   
+----------------------------------------------------
+sh ./start.sh
+rm -rf dir-name
+cat /etc/os-release
+
+----------------------------------------------------
+******** U S E R INFO - COMMANDS **************   
+----------------------------------------------------
+whoami
+uname -r 
+hostnamectl
+sudo update-alternatives --config java
+
+SUPER USER => sudo -i /// su - /// sudo any_command
+
+----------------------------------------------------
+******** R O O T - is not in the sudoers file **************   
+----------------------------------------------------
+EDIT file ==>> vi /etc/sudoers
+ADD Line  ==>> root            ALL = (ALL:ALL) ALL
+
+EDIT file ==>> sudo nano /etc/sudoers
+ADD Line  ==>> bipin   ALL=(ALL:ALL) ALL
+
+----------------------------------------------------
+******** P O R T - COMMANDS **************   
+----------------------------------------------------
+netstat -tulpn | grep LISTEN
+ss -tulpn | grep LISTEN
+lsof -i -P -n | grep LISTEN
+lsof -i tcp:8080
+lsof -i tcp:7443
+ps -ef | grep java 
+kill -9 44475
+
+All Java Process => JPS 
+Kill using       => taskkill /f /pid 15144  or using tskill 
+Find PID @ PORT  => netstat -ano | findstr :8080
+
+----------------------------------------------------
+******** F L U S H IP - COMMANDS **************   
+----------------------------------------------------
+ping: sendmsg: Operation not permitted
+
+/etc/sysconfig/iptables
+
+Set the default policy on the iptables to ACCEPT:
+
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+#Then flush the rules:
+iptables -F INPUT
+iptables -F OUTPUT
+iptables -F FORWARD
+
+----------------------------------------------------
+******** D N S - issues **************   
+----------------------------------------------------
+sudo nano /etc/hosts
+10.133.19.169   linpubt169.gl.avaya.com
+10.133.104.198  linpubah198.gl.avaya.com
+
+----------------------------------------------------
+******** CHANGE OWNER - COMMANDS **************   
+----------------------------------------------------
+chown USER:GROUP FILE
+
+sudo chown -R $USER /opt
+sudo chown -R $USER /saldata
+chmod 775 -R /opt/dev
+
+sudo adduser bipin vboxsf
+sudo usermod -a -G vboxsf bipin
+
+sudo chown saluser:salgroup /opt/avaya/SAL/gateway/SSL/spirit-trust.jks
+sudo chown saluser:salgroup CustomerDevices.xml
+chown -hR saluser:salgroup /opt/avaya/SAL/gateway/GatewayUI/war/ROOT/
+
+----------------------------------------------------
+******** FILE IMMUTABLE - COMMANDS **************   
+----------------------------------------------------
+chattr -i demo/ important_file.conf
+
+chattr +i CustomerDevices.xml
+chattr -i CustomerDevices.xml
+----------------------------------------------------
+******** TOTAL No.OF Files in a DIR & SUB-DIR RECURSIVELY - COMMANDS **************   
+----------------------------------------------------
+find DIR_NAME -type f | wc -l
+tree DIR_NAME
+
+----------------------------------------------------
+******** T A R - COMMANDS **************   
+----------------------------------------------------
+Compress Directory 
+tar -zcvf /opt/avaya.sweta.v4.1.tar.gz /opt/avaya
+tar -zcvf /opt/avaya.gaurav.v4.1.tar.gz /opt/avaya
+tar -zcvf /opt/avaya.198.v3.3.tar.gz /opt/avaya
+tar -zcvf /opt/avaya.amit.v4.1.tar.gz /opt/avaya
+
+tar -zcvf /opt/avaya.amit.28jun.v4.1.tar.gz /opt/avaya
+
+tar -zcvf /opt/avaya/SAL/gateway/GatewayUI/war/ROOT/WEB-INF/classes/com.tar.gz /opt/avaya/SAL/gateway/GatewayUI/war/ROOT/WEB-INF/classes/com
+
+tar -zcvf explodeWAR.tar.gz /opt/dev/vidya
+
+UnCompress
+tar -xvf /opt/avaya.198.v3.3.tar.gz
+tar -xvf /opt/avaya.sweta.v4.1.tar.gz
+tar -xvf /opt/avaya.gaurav.v4.1.tar.gz
+
+tar -xvf /opt/download/ADS-Installer-4.1.0.0-875.tar.gz /opt/download
+
+--------------------
+UPDATE CONFIG FILES
+--------------------
+rm -rf /opt/avaya
+cd /
+tar -xvf /opt/avaya.tar.gz /
+
+----------------------------------------------------
+******** S C P (upload) - COMMANDS ********
+----------------------------------------------------
+scp target/ROOT.war root@10.133.104.137:/opt/svtesting/
+
+scp -r root@10.133.104.198:/opt/dev/svtesting/CustomerDevices.xml  /opt/avaya/SAL/gateway/SpiritAgent/config/agent/
+
+PULLING FROM DISTRIBUTION SERVER
+scp -r scpuser@putsddist.apac.avaya.com:/tsddist/ADS-Distribution/Releases/ADS/ADS_3.2.0/3.2.0.0-751/ADS-Installer-3.2.0.0-751.tar.gz .
+pwd: scppass
+
+PUSHING FROM DISTRIBUTION SERVER
+scp /tsddist/SAL-Distribution/Releases/Gateway/SAL_4.1/4.1.0.0.10/SALGateway_4.1.0.0.10.zip root@10.133.107.37:/opt/
+pwd: scppass
+
+cp /opt/dev/svtesting/CustomerDevices.xml /opt/avaya/SAL/gateway/SpiritAgent/config/agent/
+
+----------------------------------------------------
+******** LOGS WATCHING - COMMANDS ********
+----------------------------------------------------
+journalctl -f -u gateway_api
+journalctl -f -u gatewayUI
+
+tail -f /opt/avaya/SAL/gateway/GatewayUI/logging/sal-embedded-debug.log
+tail -f /opt/avaya/SAL/gateway/GatewayUI/logging/gw-ui.log
+
+STOP GATEWAY   	  =>>  service gatewayUI stop ; service spiritAgent stop
+START GATEWAY     =>>  service gatewayUI start ; service spiritAgent start
+
+----------------------------------------------------
+******** T O M C A T - COMMANDS **************   
+----------------------------------------------------
+
+http://localhost:8080/manager/html
+admin/admin
+
+sudo sh /home/bipin/apache-tomcat-9.0.46/bin/startup.sh
+sudo sh /home/bipin/apache-tomcat-9.0.46/bin/shutdown.sh
+
+sudo tail -f /home/bipin/apache-tomcat-9.0.46/logs/catalina.out
+
+sudo chmod -R 775 *.*
+
+nano /home/bipin/apache-tomcat-9.0.46/conf/tomcat-users.xml
+ 
+  <role rolename="tomcat"/>
+  <role rolename="role1"/>
+  <role rolename="admin"/>
+  <role rolename="manager-gui"/>
+  <user username="admin" password="admin" roles="admin,manager-gui"/>
+  <user username="role1" password="role1" roles="role1"/>
+  <user username="tomcat" password="s3cret" roles="manager-gui"/>
+  
+----------------------------------------------------
+******** C U R L - COMMANDS **************   
+----------------------------------------------------
+curl -k http://127.0.0.1:8080/tweet
+curl -k http://10.133.104.198:8080/tweeet
+curl -k http://linpubah198.gl.avaya.com:8080/tweet
+
+curl -vs https://127.0.0.1:443
+curl -k https://127.0.0.1:443
+curl --trace --cacert Svtest1_Avaya123.p12 https://127.0.0.1:443
+curl --cert/--cacert certificate_file.pem:password https://www.examle.com/some_protected_page
+
+curl -k http://127.0.0.1:8080/api/gateway/ovpn/config
+curl -k http://127.0.0.1:8080/api/gateway/ovpn/isapcsenable
+curl -k http://127.0.0.1:8080/api/gateway/ovpn/isopenvpnagent
+curl -k http://127.0.0.1:8080/api/gateway/ovpn/applyresync
+
+curl -k http://10.133.107.35:8080/api/gateway/ovpn/config
+curl -k http://127.0.0.1:8080/api/gateway/ovpn/isapcsenable
+curl -k http://127.0.0.1:8080/api/gateway/ovpn/isopenvpnagent
+curl -k http://127.0.0.1:8080/api/gateway/ovpn/applyresync
+
+curl  https://127.0.0.1:7443/tweet --insecure
+
+---------------------------------------------
+*** UBUNTU PORT-FORWARDING - COMMANDS ***   
+---------------------------------------------
+ip addr show
+
+PORT FORWARDING ENABLE
+sudo apt install openssh-server
+sudo apt install net-tools
+
+sudo service ssh start
+sudo service ssh status
+
+sudo nano /etc/sudoers
+bipin   ALL=(ALL:ALL) ALL
+
+VBoxManage modifyvm "Ubuntu" --natdnshostresolver1 on
+
+----------------------------------------------------
+*** UBUNTU GUEST-ADDITIONS-INSTALL - COMMANDS ***   
+----------------------------------------------------
+https://gist.github.com/estorgio/1d679f962e8209f8a9232f7593683265
+INSTALL => sudo sh ./VBoxLinuxAdditions.run
+INSTALL => sudo apt-get install build-essential gcc make perl dkms
+
+DELETE BOTH FILES (MANUAL REMOVAL)
+sudo rm /usr/sbin/vbo*
+ls /usr/sbin/vbo*
+/usr/sbin/vbox-greeter  
+UN-INSTALL => sudo /usr/sbin/vbox-uninstall-guest-additions
+
+=========================================================
+Spring-Boot Application AS LINUX SERVICE
+=========================================================
+sudo vi /etc/systemd/system/gateway_api.service
+cp /opt/dev/gateway_api.service  /etc/systemd/system/
+
+++++++++++++++++++++++++++
+gateway_api.service content
+++++++++++++++++++++++++++
+[Unit]
+Description=SpringBoot REST-API Service
+
+[Service]
+User=root
+WorkingDirectory=/opt/dev
+ExecStart=/opt/dev/gateway_api.sh
+
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+++++++++++++++++++++++++++
+gateway_api.sh content
+++++++++++++++++++++++++++
+#!/bin/sh
+echo "Hello World"
+java -jar /opt/dev/rest-api-0.1-SNAPSHOT.jar --server.port=8080
+
+++++++++++++++++++++++++++
+STOP & DISABLE SERVICES
+++++++++++++++++++++++++++
+systemctl stop gateway_api.service ; systemctl disable gateway_api.service ; systemctl status gateway_api.service
+
+++++++++++++++++++++++++++
+START & DISABLE SERVICES
+++++++++++++++++++++++++++
+systemctl daemon-reload ; 
+systemctl enable gateway_api.service ; systemctl start gateway_api.service ; systemctl status gateway_api.service ; journalctl -f -u gateway_api
+
+++++++++++++++++++++++++++
+VIEW GATEWAY App LOGS
+++++++++++++++++++++++++++
+journalctl -f -u gateway_api
+journalctl -f -n 1000  --unit=gateway_api
+journalctl -f -u gateway_api
+
+=========================================================
+
+=========================================================================================================================================================
+
+http://tutorials.jenkov.com/java-cryptography/keytool.html
+https://www.sslshopper.com/article-most-common-java-keytool-keystore-commands.html
+https://infocenter.sybase.com/help/index.jsp?topic=/com.sybase.infocenter.dc38035.0600/html/eassec/eassec104.htm
+
+keytool -printcert -file certfile.cer
+keytool -printcert -file /tmp/cert
+keytool -export -alias jane -file janecertfile.cer
+
+-------------------------------------
+:::: To import a certificate ::::
+-------------------------------------
+keytool -import -file <certificate file>  -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks  -alias avayaitserverca2_vahana-svha.gl.avaya.com -storepass avaya123 -noprompt
+keytool -importcert -file /opt/avaya/SAL/gateway/SSL/SVCore.cer -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks -alias CoreServer
+
+-------------------------------------
+:::: To list all certificate ::::
+-------------------------------------
+keytool -list -v  -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks  -storepass avaya123 
+
+To list certificate of given alias:
+keytool -list -v  -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks  -storepass avaya123  -alias AvayaITserverCA2_vahana-svha.gl.avaya.com
+
+-------------------------------------
+:::: To delete a certificate ::::
+-------------------------------------
+(137) => keytool -delete  -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks  -storepass avaya123  -alias avayaitserverca2_vahana-svha.gl.avaya.com
+
+avayaitserverca2_vahana-svha.gl.avaya.com
+
+(198) => keytool -delete  -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks  -storepass avaya123  -alias avayaitserverca2_vahana-svngha.gl.avaya.com
+
+-------------------------------------
+Generate the self-signed certificate in the keystore
+-------------------------------------
+keytool -genkey -alias jini -keyalg RSA  -keypass changeit -storepass changeit -keystore mykeystore.jks
+keytool -list -v  -keystore mykeystore.jks  -storepass changeit
+keytool -export -alias jini -storepass changeit -file jini.cer -keystore mykeystore.jks
+
+
+keytool -genkey -alias jini -keyalg RSA  -keypass avaya123 -storepass avaya123 -keystore spirit-trust.jks -noprompt
+
+keytool -importcert -file /opt/jini.cer -keypass changeit -alias jini -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks -storepass avaya123
+keytool -export -v -alias yesbank.cer  -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust-orig.jks -storepass avaya123 -keypass avaya123
+======================================================================================================================================
+
+chown -hR saluser:salgroup /opt/avaya/SAL/gateway/GatewayUI/war/ROOT/
+scp -p /opt/installers/ADS/ADS-Installer-4.1.0.0-875.tar.gz root@10.133.104.137:/opt/download
+
+===========================================================================
+service gatewayUI stop
+service gatewayUI start
+tail -f /opt/avaya/SAL/gateway/GatewayUI/logging/sal-embedded-debug.log
+===========================================================================
