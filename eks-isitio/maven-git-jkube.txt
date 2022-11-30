@@ -49,7 +49,6 @@ mvn k8s:help
 mvn clean install k8s:build k8s:resource k8s:apply
 mvn k8s:resource k8s:deploy
 
-
 # Create Kubernetes resource descriptors.
 mvn clean k8s:resource -Pkubernetes
 # Start docker build by hitting the build goal.
@@ -65,3 +64,5 @@ k8s:deploy 	    Deploy Kubernetes resource objects to a cluster
 k8s:watch 	    Watch for doing rebuilds and restarts
 k8s:undeploy
 k8s:log
+
+

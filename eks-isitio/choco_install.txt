@@ -33,6 +33,7 @@ choco install eksctl
 choco install argocd-cli
 choco install kubernetes-helm
 choco install istioctl
+choco install kustomize
 
 choco install octant
 choco install terraform

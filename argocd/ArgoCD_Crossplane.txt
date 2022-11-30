@@ -77,6 +77,8 @@ kubectl port-forward svc/nginx  -n default 8081:80
 	echo $ARGO_PWD
 	argocd login $ARGOCD_SERVER --username admin --password $ARGO_PWD --insecure
 	
+http://a8e7557bd3b1543d8b7395b2697c4f28-1872420323.us-west-2.elb.amazonaws.com
+admin	
 	
 ## Forwarding Ports to Access Argo CD
 5.1. Retrieve the admin password which was automatically generated during your installation and decode from base64 from online.
@@ -202,6 +204,13 @@ kubectl describe -n crossplane-system rdsinstances.database.aws.crossplane.io my
 kubectl describe -n crossplane-system  my-db
 
 
+
+
+
+
+
+
+
 ################################### BUILD & DEPLOY COMPOSITE RESOURCES using CROSSPLANE  ###################################
 
 ---------- Build Package ------------------
@@ -237,6 +246,8 @@ spec:
 
 # DOCKER_REGISTRY = crossplane
 DOCKER_REGISTRY = quay.io/morningspace
+
+
 
 ---------- Install Package -----------------
 Now that you have pushed provider and configuration packages to the target registry, 
@@ -279,6 +290,8 @@ Step 2: ---------- Clean up -----------------
 # Remove claim: 
 $ kubectl delete -f examples/aws-provider/composite-resources/dynamodb/dynamodb-on-demand-partition.yaml 
 
+
+
 # Remove compositions and XRDs: 
 $ kubectl delete -f compositions/aws-provider/dynamodb 
 
@@ -287,6 +300,8 @@ $ eksctl delete cluster -f eksctl.yaml
 
 # Remove cluster (terraform) 
 $ terraform destroy --auto-approve
+
+
 
 ################################### KUBERNETES-DASHBOARD  ###################################
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml

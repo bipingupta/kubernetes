@@ -71,3 +71,7 @@ SCALE MICROSERVICE
 kubectl scale --replicas=3 deployment/hello-nginx
 
 curl localhost:8080/random
+
+
+
+
