@@ -1,0 +1,172 @@
+################################### RESET KUBECONFIG  ###################################
+aws eks update-kubeconfig --name eksdemo1 --region ap-south-1
+
+################################ SET NAMESPACE CONTEXT  ################################
+kubectl config set-context --current --namespace=crossplane-system
+
+################################ Access ArgoCD using LoadBalancer (Change ClusterIP/NodePort to LoadBalancer)  ################################
+	kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+	OR
+	kubectl -n argocd edit svc argocd-server
+	change almost last line ==>> ClusterIP/NodePort -> LoadBalancer
+
+	export ARGOCD_SERVER=`kubectl get svc argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname'`
+	echo $ARGOCD_SERVER
+	export ARGO_PWD=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
+	echo $ARGO_PWD
+
+	http://a8e7557bd3b1543d8b7395b2697c4f28-1872420323.us-west-2.elb.amazonaws.com
+	admin	
+
+
+################################### APPLICATION PROVISIONING usign ARGOCD & CROSSPLANE SAMPLE ###################################
+BELOW EXAMPLE REPO URL IS ==>> https://github.com/bipingupta/kubernetes.git
+
+-------------- EXAMPLE - 1 ----------------
+AWS INFRA PROVISIONING @ ap-south-1 (mumbai region)
+REPO URL -> https://github.com/bipingupta/kubernetes.git
+
+-------------- EXAMPLE - 2 ----------------
+Deploying NGINX
+APP PATH -> argocd/samples/nginx/yamls
+
+-------------- EXAMPLE - 3 ----------------
+Deploying ZIPKIN
+APP PATH -> argocd/samples/isitio/addons/zipkin
+
+-------------- EXAMPLE - 4 ----------------
+Deploying KIALI
+APP PATH -> argocd/samples/isitio/addons/kiali
+
+-------------- EXAMPLE - 5 ----------------
+Deploying BOOKINFO (ArgoCD example)
+APP PATH -> argocd/samples/isitio/bookinfo
+
+-------------- EXAMPLE - 6 ----------------
+Deploying GUESTBOOK (microservice-istio example)
+REPO URL -> https://github.com/argoproj/argocd-example-apps.git
+APP PATH -> guestbook
+
+-------------- EXAMPLE - 7 ----------------
+Deploying SOCK SHOP (Microservice example)
+https://microservices-demo.github.io/
+
+################################### INFRA PROVISIONING usign CROSSPLANE SAMPLE ###################################
+
+EKS Cluster        -> https://www.kloia.com/blog/production-ready-eks-cluster-with-crossplane
+					  https://github.com/cem-altuner/crossplane-prod-ready-eks
+
+VPC 		   -> https://www.tinfoilcipher.co.uk/2022/09/01/crossplane-infrastructure-as-code-for-kubernetes-platform-teams/
+
+
+PostgreSQLInstance -> https://crossplane.io/docs/v1.8/getting-started/provision-infrastructure.html
+PostgreSQLInstance -> using our own custom composite resources (XRs) and compositions (https://crossplane.io/docs/v1.8/getting-started/create-configuration.html)
+PostgreSQLInstance -> https://www.innoq.com/en/articles/2022/07/infrastructure-self-service-with-crossplane/
+
+S3 Bucket -> https://blog.codecentric.de/crossplane
+S3 Bucket -> https://pet2cattle.com/2022/02/crossplane-aws-provider
+S3 Bucket -> https://medium.com/expedia-group-tech/crossplane-implementation-integration-with-aws-16f6143644d4
+
+iam-route53 -> https://medium.com/expedia-group-tech/crossplane-implementation-integration-with-aws-16f6143644d4
+k8s cluster -> https://github.com/saiyam1814/kcd-chennai/tree/main/infra
+
+github example for argocd (infra & application) -> https://github.com/saiyam1814/kcd-chennai
+
+
+
+################################### BUILD & DEPLOY COMPOSITE RESOURCES using CROSSPLANE  ###################################
+
+---------- Build Package ------------------
+# To build a provider package
+kubectl crossplane build provider
+# To build a configuration package
+kubectl crossplane build configuration
+# To build for all platforms, you can run:
+make build.all
+
+---------- Publish Package -----------------
+# To push a provider package
+kubectl crossplane push provider $ORG_NAME/$PROVIDER_NAME:$PROVIDER_VERSION
+# To push a configuration package
+kubectl crossplane push configuration $ORG_NAME/$CONFIGURATION_NAME:$CONFIGURATION_VERSION
+# As an example, I want to push my configuration package with version v0.0.1 to quay.io:
+kubectl crossplane push configuration quay.io/morningspace/my-test-configuration:v0.0.1
+# Push to Registry other than Docker Hub
+By default, most Crossplane providers use Docker Hub as the target registry. 
+Firstly, you need to modify the provider crossplane.yaml file, change the spec.controller.image to point to the right registry. 
+Otherwise, when install the provider, it will still go back to check Docker Hub. Below is an example:
+
+apiVersion: meta.pkg.crossplane.io/v1alpha1
+kind: Provider
+metadata:
+  name: provider-kubernetes
+  annotations:
+    descriptionShort: |
+      The Crossplane Kubernetes provider enables management of Kubernetes Objects.
+spec:
+  controller:
+    image: quay.io/morningspace/provider-kubernetes-controller-amd64:VERSION
+
+# DOCKER_REGISTRY = crossplane
+DOCKER_REGISTRY = quay.io/morningspace
+
+
+
+---------- Install Package -----------------
+Now that you have pushed provider and configuration packages to the target registry, 
+you can install them on clusters using Crossplane CLI from anywhere. 
+Choose one of the below commands to execute, depending on which type of package you are going to install:
+
+# To install a provider package
+kubectl crossplane install provider $ORG_NAME/$PROVIDER_NAME:$PROVIDER_VERSION
+# To install a configuration package
+kubectl crossplane install configuration $ORG_NAME/$CONFIGURATION_NAME:$CONFIGURATION_VERSION
+
+If it is installed successfully, you should see the CompositeResourceDefinition and Composition definitions included in this package are installed on the cluster.
+ It will also install its dependency, the provider package.
+
+---------- Troubleshooting Tips -----------------
+To verify the install results, you can run:
+kubectl get crossplane
+
+When there are errors, you can run below command which gives you detailed information of all packages that are being installed:
+kubectl get lock -o yaml
+
+Step 1: ---------- Deploy Compositions -----------------
+kubectl apply -f compositions/aws-provider/dynamodb 
+
+Check and make sure the XRD is ready to be used. Note: The field is set to True when it is ready to be used.
+kubectl get xrd xdynamodbtables.awsblueprints.io 
+
+Step 2: ---------- Deploy a DynamoDB example -----------------
+To provision a resource using this Composition, take a look at the examples directory. 
+It contains various examples of using Compositions available in this repository. 
+Let’s create a table with on-demand capacity and partition key.
+
+kubectl apply -f examples/aws-provider/composite-resources/dynamodb/dynamodb-on-demand-partition.yaml
+
+kubectl get dynamodbtable.awsblueprints.io/test-table-on-demand-partition-key 
+
+kubectl describe dynamodbtable.awsblueprints.io/test-table-on-demand-partition-key
+
+Step 2: ---------- Clean up -----------------
+# Remove claim: 
+$ kubectl delete -f examples/aws-provider/composite-resources/dynamodb/dynamodb-on-demand-partition.yaml 
+
+# Remove compositions and XRDs: 
+$ kubectl delete -f compositions/aws-provider/dynamodb 
+
+# Remove cluster (eksctl) 
+$ eksctl delete cluster -f eksctl.yaml 
+
+# Remove cluster (terraform) 
+$ terraform destroy --auto-approve
+
+################################### KUBERNETES-DASHBOARD  ###################################
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
+kubectl apply -f eks-admin-service-account.yaml
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
+kubectl proxy
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#!/login
+
+

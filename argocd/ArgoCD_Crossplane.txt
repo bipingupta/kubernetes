@@ -75,6 +75,7 @@ kubectl port-forward svc/nginx  -n default 8081:80
 	echo $ARGOCD_SERVER
 	export ARGO_PWD=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 	echo $ARGO_PWD
+	
 	argocd login $ARGOCD_SERVER --username admin --password $ARGO_PWD --insecure
 	
 http://a8e7557bd3b1543d8b7395b2697c4f28-1872420323.us-west-2.elb.amazonaws.com
@@ -82,20 +83,16 @@ admin
 	
 ## Forwarding Ports to Access Argo CD
 5.1. Retrieve the admin password which was automatically generated during your installation and decode from base64 from online.
-  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}"
   kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-
-Decode the password from online (https://www.base64decode.org/)
-
-Decoded Password => OysLzLEg1k4d4D9T
 
 5.2 forward those to arbitrarily chosen other ports, like 8080, like so:
   kubectl port-forward svc/argocd-server -n argocd 8080:443
   
 5.3 Access from internet from browser.
   http://localhost:8080 
-  user id : admin
-  password :base64 decoded password.
+  user id  : admin
+  password : OysLzLEg1k4d4D9T  (Base64 Decoded Password)
+  Decode the password from online (https://www.base64decode.org/)
 
 5.4 Scale manually 
    kubectl scale deploy nginx --replicas 2
@@ -184,6 +181,7 @@ PostgreSQLInstance -> https://www.innoq.com/en/articles/2022/07/infrastructure-s
 
 S3 Bucket -> https://pet2cattle.com/2022/02/crossplane-aws-provider
 S3 Bucket -> https://medium.com/expedia-group-tech/crossplane-implementation-integration-with-aws-16f6143644d4
+S3 Bucket -> https://blog.codecentric.de/crossplane
 
 iam-route53 -> https://medium.com/expedia-group-tech/crossplane-implementation-integration-with-aws-16f6143644d4
 k8s cluster -> https://github.com/saiyam1814/kcd-chennai/tree/main/infra
@@ -202,12 +200,6 @@ kubectl get all -n crossplane-system
 ------------ DEBUGGING AWS Infrasture ------------
 kubectl describe -n crossplane-system rdsinstances.database.aws.crossplane.io my-db 
 kubectl describe -n crossplane-system  my-db
-
-
-
-
-
-
 
 
 

@@ -1,0 +1,3 @@
+kubectl get secrets -n kubernetes-dashboard
+
+kubectl get secret dashboard-admin-sa-token-rxw54 -n kubernetes-dashboard -o jsonpath='{.data.token}' | base64 -d
