@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - ingress.yaml
 - serviceaccount-admin.yaml
+- kubernetes-dashboard-lb.yaml
 - https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.1/aio/deploy/recommended.yaml
 
-namespace: kubernetes-dashboard
+namespace: kube-system

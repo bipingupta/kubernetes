@@ -1,8 +1,8 @@
 ################################### RESET KUBECONFIG  ###################################
-aws eks update-kubeconfig --name eksdemo1 --region ap-south-1
+	aws eks update-kubeconfig --name eksdemo1 --region ap-south-1
 
 ################################ SET NAMESPACE CONTEXT  ################################
-kubectl config set-context --current --namespace=crossplane-system
+	kubectl config set-context --current --namespace=crossplane-system
 
 ################################ Access ArgoCD using LoadBalancer (Change ClusterIP/NodePort to LoadBalancer)  ################################
 	kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
@@ -25,31 +25,48 @@ BELOW EXAMPLE REPO URL IS ==>> https://github.com/bipingupta/kubernetes.git
 -------------- EXAMPLE - 1 ----------------
 AWS INFRA PROVISIONING @ ap-south-1 (mumbai region)
 REPO URL -> https://github.com/bipingupta/kubernetes.git
+NAMESPACE -> default
 
 -------------- EXAMPLE - 2 ----------------
 Deploying NGINX
 APP PATH -> argocd/samples/nginx/yamls
+NAMESPACE -> 
 
 -------------- EXAMPLE - 3 ----------------
 Deploying ZIPKIN
-APP PATH -> argocd/samples/isitio/addons/zipkin
+APP PATH  -> argocd/samples/isitio/addons/zipkin
+NAMESPACE -> istio-system
 
 -------------- EXAMPLE - 4 ----------------
 Deploying KIALI
-APP PATH -> argocd/samples/isitio/addons/kiali
+APP PATH  -> argocd/samples/isitio/addons/kiali
+NAMESPACE -> istio-system
 
 -------------- EXAMPLE - 5 ----------------
 Deploying BOOKINFO (ArgoCD example)
-APP PATH -> argocd/samples/isitio/bookinfo
+APP PATH  -> argocd/samples/isitio/bookinfo
+NAMESPACE -> istio-system
 
 -------------- EXAMPLE - 6 ----------------
 Deploying GUESTBOOK (microservice-istio example)
 REPO URL -> https://github.com/argoproj/argocd-example-apps.git
-APP PATH -> guestbook
+APP PATH  -> guestbook
+NAMESPACE -> default
+
+
+-------------- EXAMPLE - 7 ----------------
+Kubernetes Dashboard
+https://microservices-demo.github.io/
+APP PATH  -> argocd/samples/dashboard
+NAMESPACE -> default
 
 -------------- EXAMPLE - 7 ----------------
 Deploying SOCK SHOP (Microservice example)
 https://microservices-demo.github.io/
+NAMESPACE -> 
+
+
+kubernetes-dashboard
 
 ################################### INFRA PROVISIONING usign CROSSPLANE SAMPLE ###################################
 
@@ -72,7 +89,7 @@ k8s cluster -> https://github.com/saiyam1814/kcd-chennai/tree/main/infra
 
 github example for argocd (infra & application) -> https://github.com/saiyam1814/kcd-chennai
 
-
+Dashboard   -> https://www.frakkingsweet.com/deploying-kubernetes-dashboard-with-argo-kustomize/
 
 ################################### BUILD & DEPLOY COMPOSITE RESOURCES using CROSSPLANE  ###################################
 
