@@ -16,20 +16,18 @@ https://a7b87810e644441d38c1520dc4cfabe8-1255069954.us-west-2.elb.amazonaws.com
 
 kubectl get sa eks-admin -n kube-system
 kubectl describe sa eks-admin -n kube-system
-
-
-
+kubectl describe secret eks-admin-token-9pgv9 -n kube-system
 
 
 kubectl get secret kubernetes-dashboard-token-7h4ch -n kubernetes-dashboard -o jsonpath='{.data.token}' | base64 -d
-
-$(kubectl get serviceaccount dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
-
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
 
 kubectl proxy
 
-http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#!/login
+
+
+========================================================================================================
 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml

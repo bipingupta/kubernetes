@@ -60,7 +60,7 @@ https://microservices-demo.github.io/
 APP PATH  -> argocd/samples/dashboard
 NAMESPACE -> default
 
--------------- EXAMPLE - 7 ----------------
+-------------- EXAMPLE - 8 ----------------
 Deploying SOCK SHOP (Microservice example)
 https://microservices-demo.github.io/
 NAMESPACE -> 
