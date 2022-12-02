@@ -80,7 +80,7 @@ kubectl port-forward svc/nginx  -n default 8081:80
 	
 http://a8e7557bd3b1543d8b7395b2697c4f28-1872420323.us-west-2.elb.amazonaws.com
 admin
-OysLzLEg1k4d4D9T
+XJkiiz6pTd-hfJAW
 	
 ## Forwarding Ports to Access Argo CD
 5.1. Retrieve the admin password which was automatically generated during your installation and decode from base64 from online.
@@ -92,7 +92,7 @@ OysLzLEg1k4d4D9T
 5.3 Access from internet from browser.
   http://localhost:8080 
   user id  : admin
-  password : OysLzLEg1k4d4D9T  (Base64 Decoded Password)
+  password : XJkiiz6pTd-hfJAW  (Base64 Decoded Password)
   Decode the password from online (https://www.base64decode.org/)
 
 5.4 Scale manually 
