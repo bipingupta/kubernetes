@@ -79,7 +79,8 @@ kubectl port-forward svc/nginx  -n default 8081:80
 	argocd login $ARGOCD_SERVER --username admin --password $ARGO_PWD --insecure
 	
 http://a8e7557bd3b1543d8b7395b2697c4f28-1872420323.us-west-2.elb.amazonaws.com
-admin	
+admin
+OysLzLEg1k4d4D9T
 	
 ## Forwarding Ports to Access Argo CD
 5.1. Retrieve the admin password which was automatically generated during your installation and decode from base64 from online.
@@ -172,7 +173,7 @@ kubectl apply -f https://raw.githubusercontent.com/crossplane/crossplane/release
 EKS Cluster        -> https://www.kloia.com/blog/production-ready-eks-cluster-with-crossplane
 					  https://github.com/cem-altuner/crossplane-prod-ready-eks
 
-VPC 			   -> https://www.tinfoilcipher.co.uk/2022/09/01/crossplane-infrastructure-as-code-for-kubernetes-platform-teams/
+VPC		   -> https://www.tinfoilcipher.co.uk/2022/09/01/crossplane-infrastructure-as-code-for-kubernetes-platform-teams/
 
 
 PostgreSQLInstance -> https://crossplane.io/docs/v1.8/getting-started/provision-infrastructure.html
