@@ -1,0 +1,49 @@
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+docker-compose --profile flower up
+username: airflow
+password: airflow
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Airflow
+http://localhost:8080
+
+Flower - The flower app for monitoring the environment.
+http://localhost:5555
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Some directories in the container are mounted, 
+(which means that their contents are synchronized between your computer and the container)
+    ./dags - you can put your DAG files here.
+    ./logs - contains logs from task execution and scheduler.
+    ./plugins - you can put your custom plugins here.
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+docker-compose up airflow-init
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Cleaning-up the environment
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    Run docker-compose down --volumes --remove-orphans command in the directory you downloaded the docker-compose.yaml file
+    Remove the entire directory where you downloaded the docker-compose.yaml file rm -rf '<DIRECTORY>'
+    Run through this guide from the very beginning, starting by re-downloading the docker-compose.yaml file
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Running Airflow
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+docker-compose up
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Running the CLI commands
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+docker-compose run airflow-worker airflow info
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Cleaning up
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+docker-compose down --volumes --rmi all
+
+docker exec -it  airflow-airflow-worker-1 bash
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+https://github.com/puckel/docker-airflow
+docker pull puckel/docker-airflow
+

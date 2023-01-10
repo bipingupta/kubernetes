@@ -1,0 +1,74 @@
+=============================
+Helpful Commands
+=============================
+
+http://blog.marcnuri.com/eclipse-jkube-introduction-kubernetes-openshift/
+https://www.eclipse.org/jkube/docs/kubernetes-maven-plugin
+
+==========================================================
+
+mvn clean install
+
+mvn k8s:build				==>> Build images
+
+docker images				==>> Check images
+
+mvn k8s:push				==>> Push images to a registry
+
+mvn k8s:resource			==>> Create Kubernetes/OpenShift resource descriptors
+
+mvn k8s:apply				==>> Apply resources to a running cluster
+
+mvn k8s:help				==>> K8S plugin Help
+
+minikube service greeting	        ==>> Open REST API at browser
+
+kubectl logs greeting-c5ff768db-dlllq   ==>> To Watch Logs of Spring-Boot Application
+
+==========================================================
+Development Goals Description
+==========================================================
+mvn k8s:deploy 				==>> Deploy resources descriptors to a cluster after creating them and building the app. 
+              				     Same as k8s:apply except that it runs in the background.
+mvn k8s:undeploy 			==>> Undeploy and remove resources descriptors from a cluster.
+mvn k8s:watch 				==>> Watch for file changes and perform rebuilds and redeployments
+mvn k8s:log 				==>> Show the logs of the running application
+mvn k8s:debug 				==>> Enable remote debugging
+
+This setup make some opinionated decisions for you:
+    As base image jkube/jkube-java-binary-s2i is chosen which enables Jolokia and jmx_exporter. 
+    It will create a Kubernetes Deployment and a Service as resource objects
+    It exports port 8080 as the application service port (and 8778 and 9779 for Jolokia and jmx_exporter access, respectively)
+==========================================================
+
+mvn package k8s:build
+mvn k8s:push
+mvn k8s:resource k8s:deploy
+minikube service greeting
+
+==========================================================
+
+		<jkube.version>1.9.1</jkube.version>
+		<jkube.enricher.jkube-service.type>NodePort</jkube.enricher.jkube-service.type>
+		<jkube.generator.name>${docker.registry}/${docker.repo}/${project.build.finalName}:${docker.tag}</jkube.generator.name>
+
+		<docker.registry>docker.io</docker.registry>
+		<docker.repo>bipingupta007</docker.repo>
+		<docker.tag>latest</docker.tag>
+		<docker.name>${docker.registry}/${docker.repo}/${project.build.finalName}:${docker.tag}</docker.name>
+
+			<plugin>
+				<groupId>org.eclipse.jkube</groupId>
+				<artifactId>kubernetes-maven-plugin</artifactId>
+				<version>${jkube.version}</version>
+				<configuration>
+					<repository>${docker.registry}/${project.artifactId}</repository>
+					<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+					<buildArgs>
+						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+				</configuration>
+			</plugin>
+
+==========================================================
+

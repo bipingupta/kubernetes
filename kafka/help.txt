@@ -1,0 +1,61 @@
+https://developer.confluent.io/quickstart/kafka-docker/
+https://www.baeldung.com/ops/kafka-docker-setup
+
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+Create a topic
+docker exec broker kafka-topics --bootstrap-server broker:9092 --create --topic quickstart2
+
+Write messages to the topic
+docker exec --interactive --tty broker kafka-console-producer --bootstrap-server broker:9092 --topic quickstart
+
+Read messages from the topic
+docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic quickstart --from-beginning
+
+Stop the Kafka broker
+docker-compose down
+
+You can list all Kafka topics with the following command:
+docker exec broker kafka-topics --list --zookeeper zookeeper:2181
+
+---------------------------------------------------------------------------
+Connect to Kafka shell
+---------------------------------------------------------------------------
+docker exec -it broker /bin/sh
+
+---------------------------------------------------------------------------
+pass either the –bootstrap-server or –zookeeper option
+---------------------------------------------------------------------------
+docker exec broker kafka-topics --bootstrap-server=localhost:9092 --list
+
+docker exec broker kafka-topics --bootstrap-server=localhost:9092 --describe --topic quickstart
+
+docker exec broker kafka-console-consumer  --bootstrap-server=localhost:9092 --topic quickstart --from-beginning --max-messages 5 
+
+docker exec broker kafka-topics --bootstrap-server=localhost:9092 --topic quickstart --delete
+
+---------------------------------------------------------------------------
+ Kafka Tool GUI utility
+---------------------------------------------------------------------------
+https://kafkatool.com/download.html
+
+mvn clean package -DskipTests
+
+---------------------------------------------------------------------------
+ Kafka Tool Console Consumer
+---------------------------------------------------------------------------
+docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic quickstart --from-beginning 
+
+---------------------------------------------------------------------------
+ Kafka Tool Console Producer
+---------------------------------------------------------------------------
+docker exec --interactive --tty broker kafka-console-producer --bootstrap-server broker:9092 --topic quickstart
+
+
+
+
+

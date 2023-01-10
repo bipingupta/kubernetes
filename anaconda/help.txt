@@ -1,0 +1,53 @@
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+=-=  RUN ANACONDA
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+docker pull continuumio/anaconda3
+
+docker run -i -t continuumio/anaconda3 /bin/bash
+
+Alternatively, you can start a Jupyter Notebook server and interact with Anaconda via your browser:
+
+docker run -i -t -p 8888:8888 continuumio/anaconda3 /bin/bash -c "\
+    conda install jupyter -y --quiet && \
+    mkdir -p /opt/notebooks && \
+    jupyter notebook \
+    --notebook-dir=/opt/notebooks --ip='*' --port=8888 \
+    --no-browser --allow-root"
+
+
+docker run -i -t -p 8888:8888 continuumio/anaconda3 /bin/bash -c "conda install jupyter -y --quiet &&  mkdir -p /opt/notebooks && jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser --allow-root"
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+=-=  RUN MINI-ANACONDA
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+docker search continuumio
+
+docker pull continuumio/miniconda3
+
+Create a container using the image:
+
+docker run -t -i continuumio/miniconda3 /bin/bash
+
+
+Test the container:
+
+conda info
+
+You now have a fully working Anaconda image.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+=-=  install and launch the Jupyter Notebook
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+https://docs.anaconda.com/anaconda/user-guide/tasks/docker/
+
+docker run -i -t -p 8888:8888 continuumio/miniconda3 /bin/bash \
+-c "/opt/conda/bin/conda install jupyter -y --quiet && mkdir \
+/opt/notebooks && /opt/conda/bin/jupyter notebook \
+--notebook-dir=/opt/notebooks --ip='*' --port=8888 \
+--no-browser --allow-root"
+
+
+https://hands-on.cloud/how-to-build-python-data-science-docker-container-based-on-anaconda/
+https://medium.com/@patrickmichelberger/getting-started-with-anaconda-docker-b50a2c482139
+

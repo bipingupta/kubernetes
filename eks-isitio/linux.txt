@@ -1,15 +1,27 @@
 ----------------------------------------------------
+******** L I N U X  -  V E R S I O N **************   
+----------------------------------------------------
+cat /etc/os-release
+uname -r 
+hostnamectl
+
+----------------------------------------------------
 ******** F I N D - COMMANDS **************   
 ----------------------------------------------------
 find /opt  -type f -name Response.properties
-find / -type f -name jboss-cli.sh
+
+find /     -type f -name jboss-cli.sh
+
 locate jdk
+
 readlink -f $(which java) 
 
 ----------------------------------------------------
 ******** A L I A S - COMMANDS **************   
 ----------------------------------------------------
+
 alias running_services='systemctl list-units  --type=service  --state=running'
+
 alias find_file='find /opt  -type f -name'
 
 alias ifconfig="ip -c a | sed -e 's/\// \//g'"
@@ -23,11 +35,11 @@ FILE SAVE   ==>> press 'ESC' key followed by :wq! Keys
 
 vi /etc/hosts
 ----------------------------------------------------
-******** R E M O V E - COMMANDS **************   
+******** R E M O V E FILES/DIR - COMMANDS **************   
 ----------------------------------------------------
 sh ./start.sh
-rm -rf dir-name
-cat /etc/os-release
+rm -rf dir-name  => ex.: rm -rf opt 
+cat /etc/os-release 
 
 ----------------------------------------------------
 ******** U S E R INFO - COMMANDS **************   
@@ -52,10 +64,13 @@ ADD Line  ==>> bipin   ALL=(ALL:ALL) ALL
 ******** P O R T - COMMANDS **************   
 ----------------------------------------------------
 netstat -tulpn | grep LISTEN
+netstat -o
 ss -tulpn | grep LISTEN
 lsof -i -P -n | grep LISTEN
 lsof -i tcp:8080
 lsof -i tcp:7443
+lsof -i:22 ## see a specific port such as 22 ##
+
 ps -ef | grep java 
 kill -9 44475
 
@@ -64,7 +79,7 @@ Kill using       => taskkill /f /pid 15144  or using tskill
 Find PID @ PORT  => netstat -ano | findstr :8080
 
 ----------------------------------------------------
-******** F L U S H IP - COMMANDS **************   
+******** F L U S H - IP - COMMANDS **************   
 ----------------------------------------------------
 ping: sendmsg: Operation not permitted
 
@@ -225,11 +240,16 @@ curl  https://127.0.0.1:7443/tweet --insecure
 ---------------------------------------------
 *** UBUNTU PORT-FORWARDING - COMMANDS ***   
 ---------------------------------------------
+sudo chown -R $USER /opt
+sudo adduser bipin vboxsf
+sudo usermod -a -G vboxsf bipin
+
 ip addr show
 
 PORT FORWARDING ENABLE
 sudo apt install openssh-server
 sudo apt install net-tools
+alias ifconfig="ip -c a | sed -e 's/\// \//g'"
 
 sudo service ssh start
 sudo service ssh status
@@ -317,6 +337,8 @@ keytool -export -alias jane -file janecertfile.cer
 -------------------------------------
 :::: To import a certificate ::::
 -------------------------------------
+https://stackoverflow.com/questions/11617210/how-to-properly-import-a-selfsigned-certificate-into-java-keystore-that-is-avail
+
 keytool -import -file <certificate file>  -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks  -alias avayaitserverca2_vahana-svha.gl.avaya.com -storepass avaya123 -noprompt
 keytool -importcert -file /opt/avaya/SAL/gateway/SSL/SVCore.cer -keystore /opt/avaya/SAL/gateway/SSL/spirit-trust.jks -alias CoreServer
 
@@ -359,3 +381,27 @@ service gatewayUI stop
 service gatewayUI start
 tail -f /opt/avaya/SAL/gateway/GatewayUI/logging/sal-embedded-debug.log
 ===========================================================================
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+:::: INSTAL OPENSSL :::::
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+which openssl
+sudo yum remove openssl
+sudo yum install openssl
+openssl version -a
+
+openssl s_client -connect 127.0.0.1:443
+openssl s_client -connect 127.0.0.1:443 -state
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+:::: INSTAL JAVA/MAVEN :::::
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+sudo -s
+sudo apt update
+sudo apt install snapd
+sudo apt install openjdk-8-jdk
+sudo apt install maven
+
+sudo update-alternatives --config java
+which java
+/usr/bin/java
