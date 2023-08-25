@@ -1,34 +1,49 @@
 https://developer.confluent.io/quickstart/kafka-docker/
 https://www.baeldung.com/ops/kafka-docker-setup
 
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
 Execute the following command to pull the images and create containers:
 docker-compose up -d
 
 Verify both are running:
 docker ps
 
+---------------------------------------------------------------------------
+                     CREATE TOPIC
+---------------------------------------------------------------------------
 Create a topic
 docker exec broker kafka-topics --bootstrap-server broker:9092 --create --topic quickstart2
 
+---------------------------------------------------------------------------
+                     WRITE Message
+---------------------------------------------------------------------------
 Write messages to the topic
 docker exec --interactive --tty broker kafka-console-producer --bootstrap-server broker:9092 --topic quickstart
 
-Read messages from the topic
+---------------------------------------------------------------------------
+                     READ Messages
+---------------------------------------------------------------------------
 docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic quickstart --from-beginning
 
-Stop the Kafka broker
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
 docker-compose down
 
-You can list all Kafka topics with the following command:
+---------------------------------------------------------------------------
+                     List all Kafka topics
+---------------------------------------------------------------------------
 docker exec broker kafka-topics --list --zookeeper zookeeper:2181
 
 ---------------------------------------------------------------------------
-Connect to Kafka shell
+Connect to Docker Kafka shell (broker)
 ---------------------------------------------------------------------------
 docker exec -it broker /bin/sh
 
 ---------------------------------------------------------------------------
-pass either the –bootstrap-server or –zookeeper option
+pass either the –bootstrap-server OR –zookeeper option
 ---------------------------------------------------------------------------
 docker exec broker kafka-topics --bootstrap-server=localhost:9092 --list
 
@@ -39,7 +54,7 @@ docker exec broker kafka-console-consumer  --bootstrap-server=localhost:9092 --t
 docker exec broker kafka-topics --bootstrap-server=localhost:9092 --topic quickstart --delete
 
 ---------------------------------------------------------------------------
- Kafka Tool GUI utility
+                     Kafka Tool GUI utility
 ---------------------------------------------------------------------------
 https://kafkatool.com/download.html
 

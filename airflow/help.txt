@@ -1,3 +1,9 @@
+
+https://github.com/xnuinside/airflow_in_docker_compose
+
+https://forum.astronomer.io/t/airflow-up-and-running-but-airflow-cfg-file-not-found/1931
+https://stackoverflow.com/questions/55347077/airflow-how-to-mount-airflow-cfg-in-docker-container
+
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 docker-compose --profile flower up
 username: airflow
