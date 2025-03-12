@@ -1,0 +1,140 @@
+FROM URL 
+http://cloudwebworld.blogspot.com/2019/02/rapidly-spinning-up-vm-with-ubuntu.html
+https://gist.github.com/rcherara/f7ddc333671d6fa32b269c0b1466c724
+https://minikube.sigs.k8s.io/docs/start/
+
+minikube start --cpus=2 --memory=4096 --driver=virtualbox --no-vtx-check=true --extra-config=apiserver.ServiceNodePortRange=1–50000
+minikube start --cpus=2 --memory=4096 --driver=hyperv --no-vtx-check=true
+
+minikube start --cpus=4 --memory=16384
+=============================
+Installation
+=============================
+choco install minikube
+
+=============================
+Start your cluster
+=============================
+start Docker Desktop
+minikube delete
+minikube start
+
+=============================
+Interact with your cluster
+=============================
+alias kubectl="minikube kubectl --"
+kubectl get po -A
+minikube dashboard
+minikube dashboard --url
+
+=============================
+Helpful KUBECTL Commands
+=============================
+$ kubectl get namespaces
+$ kubectl cluster-info
+
+$ kubectl get nodes  -o wide --show-labels --all-namespaces
+$ kubectl describe node
+$ kubectl get svc
+$ kubectl get pods
+$ kubectl get deployments
+$ kubectl get secrets -A
+$ kubectl -n kube-system describe secret 
+$ kubeadm reset -f
+
+=============================
+Multi-CLuster Minikube =>> https://minikube.sigs.k8s.io/docs/start/linux/
+
+#https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+#https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+  
+#https://developer.ibm.com/tutorials/using-kubernetes-rbac-and-service-accounts/
+#https://github.com/justmeandopensource/kubernetes/tree/master/dashboard
+#https://helm.sh/docs/topics/rbac/
+
+=============================
+DIAGNOSING DASHBOARD
+=============================
+sudo kubectl cluster-info
+sudo kubectl get namespaces
+sudo kubectl get all --all-namespaces
+sudo kubectl -n kubernetes-dashboard get all
+
+############# PORT FORWARDING #############
+sudo kubectl -n kubernetes-dashboard describe service kubernetes-dashboard
+
+############# NOTE :: APPLY PORT-FORWARDING ON POD <<<==>>> NOT ON SERVICE #############
+kubectl proxy --address='0.0.0.0'
+sudo kubectl -n kubernetes-dashboard port-forward  kubernetes-dashboard-5996555fd8-27kq8 8001:8443
+
+http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy
+http://172.42.42.100:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#!/login
+
+sudo kubectl -n kubernetes-dashboard get sa
+sudo kubectl -n kubernetes-dashboard describe sa dashboard-admin-sa
+sudo kubectl -n kubernetes-dashboard get secret dashboard-admin-sa-token
+sudo kubectl -n kubernetes-dashboard describe secret dashboard-admin-sa-token
+
+=============================
+INSTALLING RabbitMQ
+=============================
+
+https://gist.github.com/enesusta/e2ac956104dc0fa4130c795e7270bfc2
+https://phoenixnap.com/kb/install-and-configure-rabbitmq-on-kubernetes
+
+-------------------------------------------------------------------------
+Installation:
+
+    kubectl create namespace rabbit
+    choco install kubernetes-helm --force
+    helm repo add stable https://charts.helm.sh/stable
+    helm install mu-rabbit stable/rabbitmq --namespace rabbit
+    watch kubectl get deployments,pods,services --namespace rabbit
+    configure the rabbitmq.conf file
+
+-------------------------------------------------------------------------
+Credentials:
+
+    Username      : user
+    Password      : e0xHTQw9Cr
+    echo "Password      : $(kubectl get secret --namespace rabbit mu-rabbit-rabbitmq -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)"
+    echo "ErLang Cookie : $(kubectl get secret --namespace rabbit mu-rabbit-rabbitmq -o jsonpath="{.data.rabbitmq-erlang-cookie}" | base64 --decode)"
+
+RabbitMQ can be accessed within the cluster on port  at mu-rabbit-rabbitmq.rabbit.svc.cluster.local
+
+-------------------------------------------------------------------------
+To Access the RabbitMQ AMQP port:
+
+    kubectl port-forward --namespace rabbit svc/mu-rabbit-rabbitmq 5672:5672
+    echo "URL : amqp://127.0.0.1:5672/"
+
+-------------------------------------------------------------------------
+To Access the RabbitMQ Management interface:
+
+    kubectl port-forward --namespace rabbit svc/mu-rabbit-rabbitmq 15672:15672
+    echo "URL : http://127.0.0.1:15672/"
+
+=============================
+INSTALLING KEDA
+=============================
+https://keda.sh/docs/2.10/deploy/
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+kubectl create namespace keda
+helm install keda kedacore/keda
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,4 +4,3 @@
 *.deb
 *.log
 kubectl
-minikube
