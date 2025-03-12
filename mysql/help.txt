@@ -1,0 +1,35 @@
+PG_ADIM ==>> http://localhost:5050/browser/
+
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
+docker-compose down
+
+docker system prune -a
+
+
+---------------------------------------------------------------------------
+                     phpMyAdmin
+---------------------------------------------------------------------------
+http://localhost:9090/
+admin, admin
+
+
+docker run -it --rm --name mysqlterm --link mysql mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+
+
+docker exec -it mysql sh
+mysql -h 0.0.0.0 -uroot -pdebezium
+use inventory;
+show tables;
+SELECT * FROM customers;

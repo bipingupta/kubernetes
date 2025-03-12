@@ -1,0 +1,31 @@
+DROP TABLE IF EXISTS customers
+
+CREATE TABLE customers(
+	customer_id serial PRIMARY KEY, 
+	first_name VARCHAR NOT NULL, 
+	last_name VARCHAR NOT NULL,
+	email VARCHAR NOT NULL,
+	address_id INT NOT NULL
+	);
+
+CREATE TABLE payment(
+	customer_id INT NOT NULL, 
+	amount INT, 
+	mode VARCHAR NOT NULL,
+	payment_date DATE,
+	CONSTRAINT fk_customer FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+	 );
+
+INSERT INTO 
+	customers(customer_id, first_name, last_name, email, address_id)
+VALUES
+	(1, 'Mary', 'Smith', 'mary.smith@mailid.com', 5),
+	(2, 'Patricia',	'Johnson', 'patricia.johnson@mailid.com', 6)
+;
+
+INSERT INTO payment(
+	customer_id, amount, mode, payment_date)
+VALUES
+(1, 60, 'Cash', '2020-09-24'),
+(2, 30,	'Credit Card', '2020-04-27')
+;

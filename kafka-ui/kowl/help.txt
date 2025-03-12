@@ -1,0 +1,77 @@
+https://github.com/theurichde/kowl
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
+docker-compose down
+
+docker system prune -a
+
+---------------------------------------------------------------------------
+                     OWL SHOP & Debezium
+---------------------------------------------------------------------------
+
+https://github.com/cloudhut/owl-shop
+https://www.redpanda.com/blog/redpanda-acquires-cloudhut-kowl-data-streaming-kafka-ui
+
+
+
+
+
+
+https://jskim1991.medium.com/docker-docker-compose-example-for-kafka-zookeeper-and-schema-registry-c516422532e7
+
+---------------------------------------------------------------------------
+                     SCHEMA-REGISTRY
+---------------------------------------------------------------------------
+
+https://stackoverflow.com/questions/72610938/how-to-check-schema-registry-cluster-and-how-to-set-cluster-mode-using-docker-co
+https://jskim1991.medium.com/docker-docker-compose-example-for-kafka-zookeeper-and-schema-registry-c516422532e7
+https://github.com/confluentinc/schema-registry-workshop/blob/master/docker-compose.yml
+
+
+---------------------------------------------------------------------------
+                     KAFKA-REST-EX
+---------------------------------------------------------------------------
+https://docs.confluent.io/platform/current/kafka-rest/quickstart.html
+https://github.com/confluentinc/kafka-rest
+
+---------------------------------------------------------------------------
+                     KAFKA-CONNECT-WORKSHOP
+---------------------------------------------------------------------------
+https://github.com/confluentinc/kafka-workshop/tree/master
+
+
+
+
+
+---------------------------------------------------------------------------
+                     KCAT
+---------------------------------------------------------------------------
+https://github.com/edenhill/kcat
+
+
+---------------------------------------------------------------------------
+                     KSQLDB
+---------------------------------------------------------------------------
+
+https://docs.confluent.io/platform/current/ksqldb/operate-and-deploy/how-it-works.html
+
+
+
+---------------------------------------------------------------------------
+                     KAFKA PLAYGROUND
+---------------------------------------------------------------------------
+https://developer.confluent.io/demos-examples/
+https://github.com/confluentinc/cp-demo
+https://github.com/confluentinc/demo-scene/blob/master/kafka-connect-zero-to-hero/docker-compose.yml
+https://github.com/vdesabou/kafka-docker-playground/blob/master/README.md

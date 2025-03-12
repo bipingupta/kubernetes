@@ -1,0 +1,29 @@
+https://github.com/theurichde/kowl
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
+docker-compose down
+
+docker system prune -a
+
+---------------------------------------------------------------------------
+                     OWL SHOP & Debezium
+---------------------------------------------------------------------------
+
+https://github.com/cloudhut/owl-shop
+https://www.redpanda.com/blog/redpanda-acquires-cloudhut-kowl-data-streaming-kafka-ui
+https://www.iamninad.com/posts/docker-compose-for-your-next-debezium-and-postgres-project/
+https://github.com/suadev/microservices-change-data-capture-with-debezium/blob/main/docker-compose.yml
+
+
+

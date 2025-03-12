@@ -1,0 +1,43 @@
+---
+services:
+
+  mysql:
+    image: quay.io/debezium/example-mysql
+    # image: mysql:8.0.38
+    container_name: mysql
+    hostname: mysql
+    domainname: local
+    restart: "always"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: debezium
+      MYSQL_USER: mysqluser
+      MYSQL_PASSWORD: mysqlpw
+      MYSQL_DATABASE: demo
+    # volumes:
+      # - ./init.sql:/data/application/init.sql
+      # - ./mysql_data:/var/lib/mysql
+    # # command: --init-file /data/application/init.sql
+    # command: [
+      # '--authentication-policy=caching_sha2_password'
+    # ]
+    
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: phpmyadmin
+    domainname: local
+    container_name: phpmyadmin
+    restart: unless-stopped
+    links:
+      - mysql:mysql
+    depends_on:
+      - mysql
+    ports:
+      - "9090:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+

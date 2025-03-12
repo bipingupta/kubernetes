@@ -1,0 +1,89 @@
+https://opensearch.org/docs/2.2/ml-commons-plugin/api/
+
+DELETE /demostore
+GET /bootfulsearch
+
+GET _cat/indices
+GET _cat/indices/bootfulsearch
+
+GET bootfulsearch/_search
+{
+  "query": {
+     "match_all": { 
+     }
+  }
+}
+
+GET semantic_demostore/_search
+{
+  "query": {
+     "match_all": { 
+     }
+  }
+}
+
+GET demostore/_search
+{
+  "query": {
+     "match_all": { 
+     }
+  }
+}
+
+GET /_plugins/_ml/stats
+
+=============================================================================================================
+
+POST /_plugins/_ml/models/<model_id>/_deploy
+
+GET /_plugins/_ml/model_groups/_search
+
+POST /_plugins/_ml/model_groups/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "size": 1000
+}
+
+
+
+=============================================================================================================
+{
+  "size": 100, 
+  "_source": {
+    "includes": ["name", "description"]
+  },
+  "query": {
+    "multi_match": {
+      "query": "%SearchText%",
+      "fields": ["name", "description"]
+    }
+  }
+}
+
+---------------------------------------------
+
+{
+  "size": 100, 
+  "_source": {
+    "includes": ["name", "description"]
+  },
+  "query": {
+    "neural": {
+      "name_v": {
+        "query_text": "%SearchText%",
+        "model_id": "LMDWRYoBAAWrOwf-pOhU",
+        "k": 100
+      }
+    }
+  }
+}
+=============================================================================================================
+export JAVA_HOME=/snap/openjdk/current/jdk
+export PATH=$PATH:$JAVA_HOME/bin
+echo $JAVA_HOME
+echo $PATH
+
+sudo apt-get update
+apt install openjdk-17-jdk openjdk-17-jre

@@ -1,0 +1,78 @@
+https://github.com/theurichde/kowl
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
+docker-compose down
+
+docker system prune -a
+
+---------------------------------------------------------------------------
+                     OWL SHOP & Debezium
+---------------------------------------------------------------------------
+
+https://github.com/cloudhut/owl-shop
+https://www.redpanda.com/blog/redpanda-acquires-cloudhut-kowl-data-streaming-kafka-ui
+https://www.iamninad.com/posts/docker-compose-for-your-next-debezium-and-postgres-project/
+https://github.com/suadev/microservices-change-data-capture-with-debezium/blob/main/docker-compose.yml
+https://github.com/debezium/debezium-ui/blob/main/docker-compose.yaml#L67-L78
+
+
+
+
+
+---------------------------------------------------------------------------
+                     SAMPLE Debezium
+---------------------------------------------------------------------------
+
+Creating connector for debezium-demo database:
+
+$ curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" http://localhost:8083/connectors/ -d '
+{
+  "name": "debezium-demo-connector",  
+  "config": {  
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",  
+    "database.hostname": "localhost",  
+    "database.port": "3306",
+    "database.user": "root",
+    "database.password": "root",
+    "database.server.id": "10101",  
+    "database.server.name": "mysql1",  
+    "database.include.list": "debezium_demo",  
+    "database.history.kafka.bootstrap.servers": "localhost:29092",  
+    "database.history.kafka.topic": "schema-changes.debezium_demo",
+    "key.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "key.converter.schema.registry.url": "http://localhost:8085",
+    "value.converter.schema.registry.url": "http://localhost:8085"
+  }
+}'
+
+Checking the connectors:
+
+$ curl -XGET http://localhost:8083/connectors
+
+$ curl -XGET http://localhost:8083/connectors?expand=status
+-> Retrieves additional state information for each of the connectors and its tasks
+
+$ curl -XGET http://localhost:8083/connectors?expand=info
+-> Returns the metadata of each of the connectors such as the configuration, task information and type of connector
+
+Get details about a particular connector: 
+$ curl -XGET http://localhost:8083/connectors/<connector-name>
+
+Deleting a connector:
+$ curl -XDELETE http://localhost:8083/connectors/<connector-name>
+
+
+

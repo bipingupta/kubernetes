@@ -1,0 +1,42 @@
+http://localhost:8080
+
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+docker compose logs db
+ 
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
+docker-compose down
+
+docker system prune -a
+
+
+---------------------------------------------------------------------------
+                     Vector-Search
+---------------------------------------------------------------------------
+
+https://dev.to/yukaty/setting-up-postgresql-with-pgvector-using-docker-hcl
+https://dev.to/yukaty/getting-started-with-vector-search-part-2-3amh
+https://dev.to/yukaty/part-3-implementing-vector-search-with-ollama-1dop
+
+https://hub.docker.com/r/ramsrib/pgvector
+
+https://medium.com/@adarsh.ajay/setting-up-postgresql-with-pgvector-in-docker-a-step-by-step-guide-d4203f6456bd
+
+-- Find items similar to a specific vector
+SELECT id, name, item_data
+FROM items
+ORDER BY embedding <-> '[0.1, 0.2, ...]'::vector
+LIMIT 5;
+
+
+

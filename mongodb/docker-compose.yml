@@ -1,0 +1,43 @@
+---
+
+services:
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    restart: always
+    logging:
+        options:
+            max-size: 1g
+    environment:
+      MONGO_INITDB_DATABASE: admindb
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      PUID: 1000
+      PGUID: 1000
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    restart: always
+    ports:
+      - "9091:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+#     ME_CONFIG_BASICAUTH_USERNAME: admin
+#     ME_CONFIG_BASICAUTH_PASSWORD: pass
+      ME_CONFIG_MONGODB_URL: mongodb://admin:pass@mongo:27017/
+    depends_on:
+      - mongodb
+      
+volumes:
+  mongodata:
+    driver: local
+
+

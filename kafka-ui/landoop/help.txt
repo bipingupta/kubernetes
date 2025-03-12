@@ -1,0 +1,57 @@
+https://github.com/lensesio/fast-data-dev
+https://github.com/lensesio/lenses-docker
+
+
+https://rmoff.net/2018/08/02/kafka-listeners-explained/
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps -a
+
+Remove unused data
+docker system prune -af
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
+docker-compose down
+
+docker system prune -a
+
+---------------------------------------------------------------------------
+                     LENSESIO - FAST-DATA-DEV - https://hub.docker.com/r/landoop/fast-data-dev
+												https://hub.docker.com/r/landoop/fast-data-dev/dockerfile
+---------------------------------------------------------------------------
+https://github.com/lensesio/fast-data-dev/wiki
+docker run --rm -it -p 2183:2181 -p 3030:3030 -p 9081:8081 -p 9082:8082 -p 9083:8083 -p 9093:9093 -e ADV_HOST=127.0.0.1 -e BROKER_PORT=9093 landoop/fast-data-dev
+
+To get into lenses IU the fast-data-dev environment
+http://localhost:3030 
+
+
+To get into pgADmin 4 (admin@admin.com, root)
+http://localhost:15050/browser/
+
+
+---------------------------------------------------------------------------
+                     FILE-CONNECTOR-STANDALONE
+---------------------------------------------------------------------------
+# Windows Command Line:
+docker run --rm -it -v %cd%:/tutorial --net=host landoop/fast-data-dev bash
+
+# we launch the kafka connector in standalone mode:
+cd /tutorial/source/demo-1
+
+# create the topic we write to with 3 partitions
+kafka-topics --create --topic demo-1-standalone --partitions 3 --replication-factor 1 --zookeeper 127.0.0.1:2181
+
+
+# Usage is connect-standalone worker.properties connector1.properties [connector2.properties connector3.properties]
+connect-standalone worker.properties file-stream-demo-standalone.properties
+# write some data to the demo-file.txt !
+# shut down the terminal when you're done.
+###############

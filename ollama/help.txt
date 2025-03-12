@@ -1,0 +1,24 @@
+http://localhost:8080
+
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+---------------------------------------------------------------------------
+                     STOP KAFKA BROKER
+---------------------------------------------------------------------------
+docker-compose down
+
+docker system prune -a
+
+
+---------------------------------------------------------------------------
+                     Ollama-API
+---------------------------------------------------------------------------
+curl -X POST  http://localhost:7869/api/generate -d '{ "model": "llama2","prompt": "List down 5 best indian cricketer name" }'

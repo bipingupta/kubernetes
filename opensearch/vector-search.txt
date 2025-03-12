@@ -1,0 +1,151 @@
+
+https://opensearch.org/docs/latest/install-and-configure/configuration/
+opensearch.yml in /usr/share/opensearch/config/opensearch.yml
+
+plugins.ml_commons.only_run_on_ml_node: false
+plugins.ml_commons.allow_registering_model_via_url: true
+plugins.ml_commons.allow_registering_model_via_local_file: true
+
+
+ml_commons_dashboards.enabled: true 
+
+
+
+PUT _cluster/settings
+{
+   "persistent":{
+     "plugins.ml_commons.only_run_on_ml_node": false
+   }
+}
+
+GET _cluster/settings
+
+https://opensearch.org/docs/2.9/ml-commons-plugin/pretrained-models/#supported-pretrained-models
+
+POST /_plugins/_ml/models/_register
+{
+	"name": "jini-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+	"version": "1.0.1",
+	"description": "This is a sentence-transformers model: It maps sentences & paragraphs to a 384 dimensional dense vector space and can be used for tasks like clustering or semantic search.",
+	"model_task_type": "TEXT_EMBEDDING",
+	"model_format": "TORCH_SCRIPT",
+	"model_content_size_in_bytes": 488135181,
+	"model_content_hash_value": "a2ae3c4f161bd8e5a99a19ba5589443d33a120bb2bd67aa9da102c8b201f1277",
+	"model_config": {
+		"model_type": "bert",
+		"embedding_dimension": 384,
+		"framework_type": "sentence_transformers",
+		"all_config": "{\"_name_or_path\":\"old_models/paraphrase-multilingual-MiniLM-L12-v2/0_Transformer\",\"architectures\":[\"BertModel\"],\"attention_probs_dropout_prob\":0.1,\"gradient_checkpointing\":false,\"hidden_act\":\"gelu\",\"hidden_dropout_prob\":0.1,\"hidden_size\":384,\"initializer_range\":0.02,\"intermediate_size\":1536,\"layer_norm_eps\":1e-12,\"max_position_embeddings\":512,\"model_type\":\"bert\",\"num_attention_heads\":12,\"num_hidden_layers\":12,\"pad_token_id\":0,\"position_embedding_type\":\"absolute\",\"transformers_version\":\"4.7.0\",\"type_vocab_size\":2,\"use_cache\":true,\"vocab_size\":250037}"
+	},
+	"created_time": 1676326534702,
+	"url": "https://artifacts.opensearch.org/models/ml-models/huggingface/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2/1.0.1/torch_script/sentence-transformers_paraphrase-multilingual-MiniLM-L12-v2-1.0.1-torch_script.zip?raw=true"
+}
+
+
+GET /_plugins/_ml/tasks/K8DWRYoBAAWrOwf-pOg5
+
+{
+  "model_id": "LMDWRYoBAAWrOwf-pOhU",
+  "task_type": "REGISTER_MODEL",
+  "function_name": "TEXT_EMBEDDING",
+  "state": "COMPLETED",
+  "worker_node": [
+    "YiE3YA59TV-crHK7UhbscA"
+  ],
+  "create_time": 1693388809272,
+  "last_update_time": 1693388909809,
+  "is_async": true
+}
+
+
+POST /_plugins/_ml/models/LMDWRYoBAAWrOwf-pOhU/_load
+
+GET /_plugins/_ml/tasks/V8DiRYoBAAWrOwf-R-gN
+
+{
+  "model_id": "LMDWRYoBAAWrOwf-pOhU",
+  "task_type": "DEPLOY_MODEL",
+  "function_name": "TEXT_EMBEDDING",
+  "state": "COMPLETED",
+  "worker_node": [
+    "ZqkwuWWFRzy2nJHa6zvezA",
+    "YiE3YA59TV-crHK7UhbscA"
+  ],
+  "create_time": 1693389571852,
+  "last_update_time": 1693389635191,
+  "is_async": true
+  
+  
+  
+PUT _ingest/pipeline/neural-pipeline
+{
+  "description": "Semantic Search for retail product catalog ",
+  "processors" : [
+    {
+      "text_embedding": {
+        "model_id": "LMDWRYoBAAWrOwf-pOhU",
+        "field_map": {
+           "description": "desc_v",
+           "name": "name_v"
+        }
+      }
+    }
+  ]
+}
+
+PUT semantic_demostore
+{
+  "settings": {
+    "index.knn": true,  
+    "default_pipeline": "neural-pipeline",
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "desc_v": {
+        "type": "knn_vector",
+        "dimension": 384,
+        "method": {
+          "name": "hnsw",
+          "engine": "nmslib",
+          "space_type": "cosinesimil"
+        }
+      },
+      "name_v": {
+        "type": "knn_vector",
+        "dimension": 384,
+        "method": {
+          "name": "hnsw",
+          "engine": "nmslib",
+          "space_type": "cosinesimil"
+        }
+      },
+      "description": {
+        "type": "text" 
+      },
+      "name": {
+        "type": "text" 
+      } 
+    }
+  }
+}
+
+POST _reindex
+{
+  "source": {
+    "index": "demostore"
+  },
+  "dest": {
+    "index": "semantic_demostore"
+  }
+}
+
+GET semantic_demostore/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+https://opensearch-project.github.io/opensearch-py-ml/examples/demo_ml_commons_integration.html

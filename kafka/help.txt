@@ -1,6 +1,7 @@
 https://developer.confluent.io/quickstart/kafka-docker/
 https://www.baeldung.com/ops/kafka-docker-setup
 
+kompose convert -f docker-compose.yml
 ---------------------------------------------------------------------------
                      START Docker Compose
 ---------------------------------------------------------------------------
@@ -11,47 +12,59 @@ Verify both are running:
 docker ps
 
 ---------------------------------------------------------------------------
-                     CREATE TOPIC
----------------------------------------------------------------------------
-Create a topic
-docker exec broker kafka-topics --bootstrap-server broker:9092 --create --topic quickstart2
-
----------------------------------------------------------------------------
-                     WRITE Message
----------------------------------------------------------------------------
-Write messages to the topic
-docker exec --interactive --tty broker kafka-console-producer --bootstrap-server broker:9092 --topic quickstart
-
----------------------------------------------------------------------------
-                     READ Messages
----------------------------------------------------------------------------
-docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic quickstart --from-beginning
-
----------------------------------------------------------------------------
                      STOP KAFKA BROKER
 ---------------------------------------------------------------------------
 docker-compose down
 
 ---------------------------------------------------------------------------
-                     List all Kafka topics
+                     CREATE TOPIC
 ---------------------------------------------------------------------------
-docker exec broker kafka-topics --list --zookeeper zookeeper:2181
+Create a topic
+docker exec kafka kafka-topics --bootstrap-server kafka:9092 --create --topic quickstart
+docker exec kafka kafka-topics --bootstrap-server kafka:9092 --create --topic quickstart --partitions 3 --replication-factor 1
+
+Delete a topic
+docker exec kafka kafka-topics --bootstrap-server kafka:9092 --delete --topic quickstart
+
+Describe a topic
+docker exec kafka kafka-topics --bootstrap-server kafka:9092 --describe --topic quickstart
+
+List topics
+docker exec kafka kafka-topics --bootstrap-server kafka:9092 --list
 
 ---------------------------------------------------------------------------
-Connect to Docker Kafka shell (broker)
+                     WRITE Message
 ---------------------------------------------------------------------------
-docker exec -it broker /bin/sh
+Write messages to the topic
+docker exec --interactive --tty kafka kafka-console-producer --bootstrap-server kafka:9092 --topic quickstart --producer-property acks=all
+
+---------------------------------------------------------------------------
+                     READ Messages
+---------------------------------------------------------------------------
+docker exec --interactive --tty kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic quickstart --from-beginning
+
+
+
+---------------------------------------------------------------------------
+                     List all Kafka topics
+---------------------------------------------------------------------------
+docker exec kafka kafka-topics --list --zookeeper zookeeper:2181
+
+---------------------------------------------------------------------------
+Connect to Docker Kafka shell (kafka)
+---------------------------------------------------------------------------
+docker exec -it kafka /bin/sh
 
 ---------------------------------------------------------------------------
 pass either the –bootstrap-server OR –zookeeper option
 ---------------------------------------------------------------------------
-docker exec broker kafka-topics --bootstrap-server=localhost:9092 --list
+docker exec kafka kafka-topics --bootstrap-server=localhost:9092 --list
 
-docker exec broker kafka-topics --bootstrap-server=localhost:9092 --describe --topic quickstart
+docker exec kafka kafka-topics --bootstrap-server=localhost:9092 --describe --topic quickstart
 
-docker exec broker kafka-console-consumer  --bootstrap-server=localhost:9092 --topic quickstart --from-beginning --max-messages 5 
+docker exec kafka kafka-console-consumer  --bootstrap-server=localhost:9092 --topic quickstart --from-beginning --max-messages 5 
 
-docker exec broker kafka-topics --bootstrap-server=localhost:9092 --topic quickstart --delete
+docker exec kafka kafka-topics --bootstrap-server=localhost:9092 --topic quickstart --delete
 
 ---------------------------------------------------------------------------
                      Kafka Tool GUI utility

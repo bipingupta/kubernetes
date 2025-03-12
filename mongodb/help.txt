@@ -1,0 +1,59 @@
+
+https://github.com/fabianlee/docker-mongodb/tree/master
+https://www.baeldung.com/linux/mongodb-as-docker-container
+https://hub.docker.com/_/mongo
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+docker inspect <imageId>
+docker volume ls
+docker system prune -a
+
+The following command line will give you a bash shell inside your mongo container:
+$ docker exec -it mongodb bash
+$ docker-compose exec mongodb bash
+
+The MongoDB Server log is available through Docker's container log:
+$ docker logs mongodb
+
+=========================================================================
+apt-get update
+apt-get install -y nano
+apt-get install -y iputils-ping
+
+docker-compose exec mongodb ping mongo
+
+---------------------------------------------------------------------------
+                     CONNECTION URL (MONGO_EXPRESS)
+---------------------------------------------------------------------------
+http://localhost:9091/
+
+
+---------------------------------------------------------------------------
+             CONNECTION TO (MONGODB SERVER) FROM MONGODB COMPASS
+---------------------------------------------------------------------------
+mongodb://admin:pass@localhost:27017/?authMechanism=DEFAULT
+
+
+---------------------------------------------------------------------------
+                     TEST MongoDB Server
+---------------------------------------------------------------------------
+mongo admin -u root -p root
+show dbs
+use mydatabase
+show collections
+db.your_collection_name.find()
+save ==>> db.your_collection_name.save({"name":"Sony AK"})
+db.version()
+
+
+
+
+
+

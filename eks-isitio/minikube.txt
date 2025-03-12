@@ -1,7 +1,7 @@
 ============================
 MINIKUBE
 ============================
-minikube start --vm-driver virtualbox --memory 8192 --cpus 4 --show-libmachine-logs --alsologtostderr
+minikube start --vm-driver virtualbox --memory 8192 --cpus 4 --alsologtostderr
 minikube delete, minikube start, minikube status, 
 minikube version, minikube update-check
 minikube ssh

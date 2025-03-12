@@ -1,0 +1,68 @@
+KONG API-GATEWAY Training Agenda
+
+DAY-1 (25-Jan)
+Kong Installation on DOCKER 
+(Postgres, Kong Database Creation and KONG Installation)
+
+DAY-2 (27-Jan)
+Kong Architecture
+Installing sample m/s on docker
+- Configuring Services (m/s on Kong API-Gateway using Kong GUI)
+- Configuring Routes (m/s on Kong API-Gateway using Kong GUI)
+- Confuring Consumer (m/s on Kong API-Gateway using Kong GUI)
+
+DAY-3 (30-Jan)
+Installing sample m/s on docker
+- Configuring Plugins 
+- Configuring Upstreams
+- Confuring Certificates
+
+DAY-4 (1-Feb)
+Walk thru Kong API-Gateway provided services from Kong GUI as follows:
+Services
+Routes
+Consumers
+Plugins
+Upstreams
+Certificates
+
+Day-6 (2-Feb)
+:::::: Show Casing ::::::
+How to manage  Service, Routes, Consumer using Spring-Boot programatically
+
+:::::: Assignment to be completed in a week ::::::
+Proramatically using Spring-Boot achieve the following :
+- add Service using Spring-Boot
+- add Routes using Spring-Boot
+- add consumers using Spring-Boot
+
+
+===========================================================================
+	KONG - TRAINING
+	
+1	"Kong Installation on DOCKER-MACHINE
+(Postgres, Kong Database Creation and Kong API-Gateway Installation)"
+	
+2	Kong Architecture
+	
+3	Configuring m/s API using KONG - GUI
+	- Configuring Gateway Service (microservices/consuming public API)
+	- Configuring Route (for above microservices)
+	- Configuring Group & Consumer (to be used by plugin)
+	"- Configuring following Plugins 
+** Request Size Plugin
+** Request Termination Plugin
+** Request Transformer Plugin
+** IP Restriction Plugin
+** Basic Authentication Plugin
+** ACL Plugin
+** Key Authentication Plugin
+** BOT Detection Plugin
+"
+	- Upstreams Overview
+	
+4	"Configuring m/s API using KONG-ADMIN-API & Postman
+(https://docs.konghq.com/gateway/latest/admin-api/)"
+	- Configuring Gateway Service using KONG admin api
+	- Configuring Route using KONG admin api
+	- Configuring Group & Consumer using KONG admin api

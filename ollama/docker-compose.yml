@@ -1,0 +1,59 @@
+---
+
+services:
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "7869:11434"
+    volumes:
+      - ./ollama/ollama:/root/.ollama
+      - ./model_files:/model_files  # Mount the directory with the trained model
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_HOST=0.0.0.0
+    tty: true
+    # entrypoint: ["/bin/sh", "/model_files/run_ollama.sh"] # Loading the finetuned Mistral with the GGUF file
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
+    container_name: open-webui
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    build:
+      context: .
+      args:
+        OLLAMA_BASE_URL: '/ollama'
+      dockerfile: Dockerfile
+    ports:
+      - ${OPEN_WEBUI_PORT-3001}:8080
+    environment:
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+      - 'OLLAMA_BASE_URLS=http://ollama:11434'
+      - 'WEBUI_SECRET_KEY='
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - open-webui:/app/backend/data
+
+volumes:
+  ollama: {}
+  open-webui: {}
+ 
+ #http://localhost:3001/auth
+  
+#https://geshan.com.np/blog/2025/02/ollama-docker-compose/
+#https://collabnix.com/how-to-setup-ollama-with-ollama-webui-using-docker-compose/
+#https://dev.to/ajeetraina/how-to-setup-open-webui-with-ollama-and-docker-desktop-24f0
+#https://www.bitdoze.com/ollama-docker-install/
+#https://itsfoss.com/ollama-web-ui-tools/

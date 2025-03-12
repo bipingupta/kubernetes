@@ -1,5 +1,31 @@
 FROM URL 
 http://cloudwebworld.blogspot.com/2019/02/rapidly-spinning-up-vm-with-ubuntu.html
+https://gist.github.com/rcherara/f7ddc333671d6fa32b269c0b1466c724
+https://minikube.sigs.k8s.io/docs/start/
+
+minikube start --cpus=2 --memory=4096 --driver=virtualbox --no-vtx-check=true --extra-config=apiserver.ServiceNodePortRange=1–50000
+minikube start --cpus=2 --memory=4096 --driver=hyperv --no-vtx-check=true
+
+minikube start --cpus=4 --memory=16384
+=============================
+Installation
+=============================
+choco install minikube
+
+=============================
+Start your cluster
+=============================
+start Docker Desktop
+minikube delete
+minikube start
+
+=============================
+Interact with your cluster
+=============================
+alias kubectl="minikube kubectl --"
+kubectl get po -A
+minikube dashboard
+minikube dashboard --url
 
 =============================
 Helpful KUBECTL Commands
@@ -50,6 +76,53 @@ sudo kubectl -n kubernetes-dashboard get secret dashboard-admin-sa-token
 sudo kubectl -n kubernetes-dashboard describe secret dashboard-admin-sa-token
 
 =============================
+INSTALLING RabbitMQ
+=============================
+
+https://gist.github.com/enesusta/e2ac956104dc0fa4130c795e7270bfc2
+https://phoenixnap.com/kb/install-and-configure-rabbitmq-on-kubernetes
+
+-------------------------------------------------------------------------
+Installation:
+
+    kubectl create namespace rabbit
+    choco install kubernetes-helm --force
+    helm repo add stable https://charts.helm.sh/stable
+    helm install mu-rabbit stable/rabbitmq --namespace rabbit
+    watch kubectl get deployments,pods,services --namespace rabbit
+    configure the rabbitmq.conf file
+
+-------------------------------------------------------------------------
+Credentials:
+
+    Username      : user
+    Password      : e0xHTQw9Cr
+    echo "Password      : $(kubectl get secret --namespace rabbit mu-rabbit-rabbitmq -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)"
+    echo "ErLang Cookie : $(kubectl get secret --namespace rabbit mu-rabbit-rabbitmq -o jsonpath="{.data.rabbitmq-erlang-cookie}" | base64 --decode)"
+
+RabbitMQ can be accessed within the cluster on port  at mu-rabbit-rabbitmq.rabbit.svc.cluster.local
+
+-------------------------------------------------------------------------
+To Access the RabbitMQ AMQP port:
+
+    kubectl port-forward --namespace rabbit svc/mu-rabbit-rabbitmq 5672:5672
+    echo "URL : amqp://127.0.0.1:5672/"
+
+-------------------------------------------------------------------------
+To Access the RabbitMQ Management interface:
+
+    kubectl port-forward --namespace rabbit svc/mu-rabbit-rabbitmq 15672:15672
+    echo "URL : http://127.0.0.1:15672/"
+
+=============================
+INSTALLING KEDA
+=============================
+https://keda.sh/docs/2.10/deploy/
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+kubectl create namespace keda
+helm install keda kedacore/keda
+
 
 
 

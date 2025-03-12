@@ -1,0 +1,16 @@
+# See: https://github.com/redpanda-data/console/tree/905ce28489bf0e46ab349a12da837ac2767ce5ad/docs/config   for reference config files.
+kafka:
+  brokers:
+    - kafka:29092
+  schemaRegistry:
+    enabled: true
+    urls: ["http://schemaregistry:8085"]
+
+# connect:
+ # enabled: true
+ # clusters:
+   # - name: connect
+     # url: http://connect:8083
+
+# server:
+  # listenPort: 8080

@@ -1,0 +1,61 @@
+Run OpenSearch in a Docker container
+https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/#sample-docker-composeyml
+
+Supported pretrained models
+https://opensearch.org/docs/latest/ml-commons-plugin/pretrained-models/
+
+Upload model to OpenSearch
+https://opensearch.org/docs/latest/ml-commons-plugin/ml-framework/
+
+http://localhost:5601/app/login?
+Log in with the default username admin and password admin 
+
+---------------------------------------------------------------------------
+                     START Docker Compose
+---------------------------------------------------------------------------
+Execute the following command to pull the images and create containers:
+docker-compose up -d
+
+Verify both are running:
+docker ps
+
+docker-compose down
+---------------------------------------------------------------------------
+                     INCREASE CONTAINER MEMORY
+---------------------------------------------------------------------------
+Open powershell, run
+wsl -d docker-desktop
+sysctl -w vm.max_map_count=262144
+https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/
+
+
+---------------------------------------------------------------------------
+                     OPENSEARCH DASHBOARD
+---------------------------------------------------------------------------
+http://localhost:5601/
+username: kibanaserver
+password: kibanaserver
+
+
+---------------------------------------------------------------------------
+                     TEST Opensearch
+---------------------------------------------------------------------------
+curl https://localhost:9200 -ku "admin:admin" 
+curl https://localhost:9200/my_index/_search -ku "admin:admin"
+
+keytool -keystore "C:/Program Files/Java/jdk-17/lib/security/cacerts" -storepass changeit -list 
+
+---------------------------------------------------------------------------
+                     Cheatsheet Opensearch
+---------------------------------------------------------------------------
+GET _cat/indices
+GET _cat/indices/bootfulsearch
+GET bootfulsearch
+{
+  "query": {
+     "match_all": { 
+     }
+  }
+}
+
+
